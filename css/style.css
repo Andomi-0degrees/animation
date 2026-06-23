@@ -1,0 +1,22 @@
+* { box-sizing: border-box; }
+body {
+    margin: 0; padding: 0;
+    overflow-x: hidden;
+    background-color: #0b0f19;
+    font-family: system-ui, sans-serif;
+}
+canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 1; display: block;
+}
+.scroll-wrapper {
+    position: relative; z-index: 2;
+    height: 600vh; /* Deep scrolling track length */
+}
+.scroll-section {
+    height: 100vh; display: flex; align-items: center;
+    padding-left: 6%; color: rgba(255, 255, 255, 0.2);
+    font-size: 2.5rem; font-weight: 800; pointer-events: none;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}

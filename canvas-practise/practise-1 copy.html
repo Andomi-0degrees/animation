@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>HTML5 Canvas - Draw Rectangle & Circle</h1>
+
+<canvas id="myCanvas" width="500" height="500" style="border:1px solid black;">
+Sorry, your browser does not support canvas.
+</canvas>
+
+<script>
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+
+// Rectangle
+ctx.fillStyle = "red";
+ctx.fillRect(20, 20, 150, 75);
+
+// Circle
+ctx.beginPath();
+ctx.arc(220, 60, 40, 0, 2 * Math.PI);
+ctx.fillStyle = "blue";
+ctx.fill();
+ctx.stroke();
+
+// Rectangle
+ctx.fillStyle = "orange";
+ctx.fillRect(100, 120, 100, 55);
+
+// Star
+ctx.beginPath();
+ctx.moveTo(300, 150);   // Top point
+ctx.lineTo(320, 190);
+ctx.lineTo(365, 190);
+ctx.lineTo(330, 215);
+ctx.lineTo(345, 260);
+ctx.lineTo(300, 235);
+ctx.lineTo(255, 260);
+ctx.lineTo(270, 215);
+ctx.lineTo(235, 190);
+ctx.lineTo(280, 190);
+ctx.closePath();
+
+ctx.fillStyle = "gold";
+ctx.fill();
+ctx.stroke();
+
+// Triangle
+ctx.beginPath();
+ctx.moveTo(50, 250);
+ctx.lineTo(100, 350);
+ctx.lineTo(0, 350);
+ctx.closePath();
+ctx.fillStyle = "green";
+ctx.fill();
+
+// Line
+ctx.beginPath();
+ctx.moveTo(150, 300);
+ctx.lineTo(300, 300);
+ctx.lineWidth = 5;
+ctx.strokeStyle = "purple";
+ctx.stroke();
+
+// Pentagon
+ctx.beginPath();
+ctx.moveTo(400, 250);
+ctx.lineTo(450, 290);
+ctx.lineTo(430, 350);
+ctx.lineTo(370, 350);
+ctx.lineTo(350, 290);
+ctx.closePath();
+ctx.fillStyle = "pink";
+ctx.fill();
+ctx.stroke();
+
+// Ellipse
+ctx.beginPath();
+ctx.ellipse(150, 420, 80, 40, 0, 0, 2 * Math.PI);
+ctx.fillStyle = "cyan";
+ctx.fill();
+ctx.stroke();
+
+// Hexagon
+ctx.beginPath();
+ctx.moveTo(300, 400);
+ctx.lineTo(340, 380);
+ctx.lineTo(380, 400);
+ctx.lineTo(380, 450);
+ctx.lineTo(340, 470);
+ctx.lineTo(300, 450);
+ctx.closePath();
+ctx.fillStyle = "lime";
+ctx.fill();
+ctx.stroke();
+
+// Diamond
+ctx.beginPath();
+ctx.moveTo(450, 400);
+ctx.lineTo(500, 450);
+ctx.lineTo(450, 500);
+ctx.lineTo(400, 450);
+ctx.closePath();
+ctx.fillStyle = "brown";
+ctx.fill();
+ctx.stroke();
+
+const img = new Image();
+img.src = "https://picsum.photos/200";
+
+img.onload = function () {
+
+    // Create Star Path
+    ctx.save();
+    ctx.beginPath();
+
+    ctx.moveTo(300, 150);
+    ctx.lineTo(320, 190);
+    ctx.lineTo(365, 190);
+    ctx.lineTo(330, 215);
+    ctx.lineTo(345, 260);
+    ctx.lineTo(300, 235);
+    ctx.lineTo(255, 260);
+    ctx.lineTo(270, 215);
+    ctx.lineTo(235, 190);
+    ctx.lineTo(280, 190);
+    ctx.closePath();
+
+    // Clip to Star Shape
+    ctx.clip();
+
+    // Draw Image
+    ctx.drawImage(
+        img,
+        235, 150, // x, y
+        200, 200  // width, height
+    );
+
+    ctx.restore();
+
+    // Star Border
+    ctx.beginPath();
+    ctx.moveTo(300, 150);
+    ctx.lineTo(320, 190);
+    ctx.lineTo(365, 190);
+    ctx.lineTo(330, 215);
+    ctx.lineTo(345, 260);
+    ctx.lineTo(300, 235);
+    ctx.lineTo(255, 260);
+    ctx.lineTo(270, 215);
+    ctx.lineTo(235, 190);
+    ctx.lineTo(280, 190);
+    ctx.closePath();
+
+    ctx.strokeStyle = "gold";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+};
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.translate(250, 150); // center
+    ctx.rotate(angle);
+    drawStar(0, 0, 60);
+    ctx.restore();
+
+    angle += 0.02; // speed
+
+    requestAnimationFrame(animate);
+}
+
+
+
+</script>
+
+</body>
+</html>

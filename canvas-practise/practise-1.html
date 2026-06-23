@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Managing Multiple Canvas Objects</title>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #0f172a;
+            font-family: system-ui, sans-serif;
+        }
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .info-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0,0,0,0.6);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 10; /* Keep it above everything */
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="info-overlay">
+        <h3>Canvas Object Management</h3>
+        <p>Scroll down or up to drive all independent objects dynamically!</p>
+    </div>
+
+    <canvas id="mainCanvas"></canvas>
+
+    <div style="height: 400vh; position: relative; z-index: 2;"></div>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let scrollPercent = 0;
+
+        // 1. Handle Responsive Screen Sizing
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', () => { resize(); renderScene(); });
+        resize();
+
+        // 2. Capture Scroll Progress
+        function updateScrollPercent() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            if (docHeight > 0) {
+                scrollPercent = scrollTop / docHeight;
+            } else {
+                scrollPercent = 0;
+            }
+            renderScene();
+        }
+
+        window.addEventListener('scroll', updateScrollPercent, { passive: true });
+        window.addEventListener('resize', () => {
+            resize();
+            updateScrollPercent();
+        });
+
+        // ========================================================
+        // 3. DEFINE THE DATA / ARRAYS FOR MULTIPLE OBJECTS
+        // ========================================================
+        const clouds = [
+            { xRatio: 0.1, yRatio: 0.15, radius: 30, speedFactor: 100 },
+            { xRatio: 0.4, yRatio: 0.10, radius: 45, speedFactor: 180 },
+            { xRatio: 0.7, yRatio: 0.20, radius: 25, speedFactor: 80 },
+            { xRatio: 0.9, yRatio: 0.12, radius: 35, speedFactor: 140 }
+        ];
+
+        const trees = [
+            { xRatio: 0.15, baseSize: 25, color: '#166534' },
+            { xRatio: 0.30, baseSize: 35, color: '#15803d' },
+            { xRatio: 0.45, baseSize: 20, color: '#166534' },
+            { xRatio: 0.75, baseSize: 40, color: '#14532d' },
+            { xRatio: 0.90, baseSize: 30, color: '#15803d' }
+        ];
+
+        const cars = [
+            { yOffset: 30, width: 55, color: '#ef4444', speedMultiplier: 1.5 },
+            { yOffset: 70, width: 70, color: '#3b82f6', speedMultiplier: 2.2 },
+            { yOffset: 110, width: 50, color: '#eab308', speedMultiplier: 1.1 }
+        ];
+
+        // ========================================================
+        // 4. THE MASTER RENDER LOOP
+        // ========================================================
+        function renderScene() {
+            const horizonY = canvas.height * 0.6;
+
+            // BACKGROUND SKY LAYER
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // GROUND LAYER
+            ctx.fillStyle = '#4ade80';
+            ctx.fillRect(0, horizonY, canvas.width, canvas.height - horizonY);
+
+            // --- DRAW MULTIPLE CLOUDS ---
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+            clouds.forEach(cloud => {
+                const currentX = (cloud.xRatio * canvas.width) + (scrollPercent * cloud.speedFactor);
+                const currentY = cloud.yRatio * canvas.height;
+                
+                ctx.beginPath();
+                ctx.arc(currentX, currentY, cloud.radius, 0, Math.PI * 2);
+                ctx.arc(currentX + cloud.radius * 0.6, currentY - cloud.radius * 0.2, cloud.radius * 0.8, 0, Math.PI * 2);
+                ctx.arc(currentX - cloud.radius * 0.6, currentY, cloud.radius * 0.7, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // --- DRAW MULTIPLE TREES ---
+            trees.forEach(tree => {
+                const treeX = tree.xRatio * canvas.width;
+                ctx.fillStyle = '#78350f';
+                ctx.fillRect(treeX - 5, horizonY - tree.baseSize, 10, tree.baseSize);
+                
+                ctx.fillStyle = tree.color;
+                ctx.beginPath();
+                ctx.arc(treeX, horizonY - tree.baseSize, tree.baseSize * 0.8, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // --- DRAW MULTIPLE CARS ---
+            cars.forEach(car => {
+                const carX = -100 + (canvas.width + 200) * ((scrollPercent * car.speedMultiplier) % 1.0);
+                const carY = horizonY + car.yOffset;
+
+                ctx.fillStyle = car.color;
+                ctx.fillRect(carX, carY, car.width, 16);
+                ctx.fillRect(carX + (car.width * 0.2), carY - 10, car.width * 0.6, 10);
+
+                ctx.fillStyle = '#1e293b';
+                ctx.beginPath();
+                ctx.arc(carX + (car.width * 0.25), carY + 16, 6, 0, Math.PI * 2);
+                ctx.arc(carX + (car.width * 0.75), carY + 16, 6, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        renderScene();
+    </script>
+</body>
+</html>
