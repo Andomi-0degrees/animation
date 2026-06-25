@@ -1,11 +1,1088 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Spotlight — Cinematic Scroll Hero</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* ── LOADER ── */
+        .loader {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+        }
+
+        .loader-ring {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        .loader-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .loader-ring circle {
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .loader-ring .ring-bg { stroke: rgba(255, 255, 255, 0.08); }
+
+        .loader-ring .ring-progress {
+            stroke: #f5c842;
+            stroke-linecap: round;
+            stroke-dasharray: 377;
+            stroke-dashoffset: 377;
+            filter: drop-shadow(0 0 8px #f5c842);
+        }
+
+        .loader-spot {
+            position: absolute;
+            inset: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(245, 200, 66, 0.35) 0%, transparent 70%);
+            transform: scale(0);
+        }
+
+        .loader-count {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 72px;
+            line-height: 1;
+            color: #fff;
+        }
+
+        .loader-count span {
+            font-size: 28px;
+            color: #f5c842;
+            vertical-align: super;
+        }
+
+        .loader-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .loader-flash {
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ── IMAGE STAGE ── */
+        .image-stage {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .img-card {
+            position: absolute;
+            width: clamp(200px, 28vw, 380px);
+            height: clamp(260px, 36vw, 480px);
+            border-radius: 12px;
+            overflow: hidden;
+            will-change: transform, opacity, filter;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .img-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        .img-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.2);
+        }
+
+        .img-card .img-num {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            line-height: 1;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
+            z-index: 2;
+        }
+
+        /* ── SECTIONS ── */
+        .section {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            will-change: opacity, transform;
+            backface-visibility: hidden;
+        }
+
+        .section.is-active {
+            pointer-events: auto;
+        }
+
+        /* Section 1 Hero */
+        .section--hero {
+            text-align: center;
+        }
+
+        .section--hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(245, 200, 66, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 100% 100% at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.85) 100%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 22px;
+            border-radius: 100px;
+            border: 1px solid rgba(245, 200, 66, 0.3);
+            background: rgba(245, 200, 66, 0.06);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #f5c842;
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+
+        .hero-badge .shine {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .hero-title {
+            position: relative;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(4rem, 14vw, 10rem);
+            line-height: 0.9;
+            letter-spacing: 0.02em;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .hero-title .char {
+            display: inline-block;
+        }
+
+        .hero-title .accent { color: #f5c842; }
+
+        .hero-sub {
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+            max-width: 460px;
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            border-radius: 100px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn--gold {
+            background: #f5c842;
+            color: #0a0a0a;
+            border: none;
+            box-shadow: 0 0 50px rgba(245, 200, 66, 0.3);
+        }
+
+        .btn--outline {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 36px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            opacity: 0;
+        }
+
+        .scroll-hint .wheel {
+            width: 22px;
+            height: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .scroll-hint .wheel::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 8px;
+            background: #f5c842;
+            border-radius: 2px;
+            animation: wheelDrop 1.6s ease-in-out infinite;
+        }
+
+        @keyframes wheelDrop {
+            0% { opacity: 1; top: 6px; }
+            100% { opacity: 0; top: 18px; }
+        }
+
+        /* Section 2 — Vision */
+        .section--vision {
+            background: #08080f;
+        }
+
+        .section--vision::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 50% 40% at 50% 50%, rgba(245, 200, 66, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .vision-inner {
+            position: relative;
+            max-width: 1100px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .vision-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: #f5c842;
+            margin-bottom: 16px;
+        }
+
+        .vision-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            line-height: 0.95;
+            margin-bottom: 24px;
+        }
+
+        .vision-text {
+            font-size: 1rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.8;
+            margin-bottom: 32px;
+        }
+
+        .vision-stats {
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: #f5c842;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 4px;
+        }
+
+        .vision-visual {
+            position: relative;
+            height: 420px;
+        }
+
+        .vision-img {
+            position: absolute;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .vision-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .vision-img--main {
+            width: 75%;
+            height: 80%;
+            top: 10%;
+            right: 0;
+            z-index: 2;
+        }
+
+        .vision-img--sub {
+            width: 50%;
+            height: 45%;
+            bottom: 0;
+            left: 0;
+            z-index: 3;
+            border: 3px solid #08080f;
+        }
+
+        /* Section 3 — Gallery */
+        .section--gallery {
+            background: #050508;
+        }
+
+        .gallery-inner {
+            position: relative;
+            max-width: 1100px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .gallery-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            margin-bottom: 12px;
+        }
+
+        .gallery-sub {
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 48px;
+            font-weight: 300;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 4/5;
+            border-radius: 10px;
+            overflow: hidden;
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .gallery-item span {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+        }
+
+        /* ── SCROLL TRANSITION OVERLAY ── */
+        .transition-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 150;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        /* Step 1: top + bottom close */
+        .curtain-v {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 50.5%;
+            background: #000;
+            will-change: transform;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        .curtain-v--top {
+            top: 0;
+            border-bottom: 1px solid rgba(245, 200, 66, 0.2);
+        }
+
+        .curtain-v--bottom {
+            bottom: 0;
+            border-top: 1px solid rgba(245, 200, 66, 0.2);
+        }
+
+        /* Step 2: center peek window */
+        .center-peek {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60vw;
+            height: 32vh;
+            margin-left: -30vw;
+            margin-top: -16vh;
+            overflow: hidden;
+            background: #111;
+            z-index: 4;
+            border-radius: 8px;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            transform: scaleY(0);
+            transform-origin: center center;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .center-peek img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.75;
+            transform: scale(1.15);
+            will-change: transform;
+        }
+
+        .center-peek-label {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2rem, 6vw, 4rem);
+            letter-spacing: 0.1em;
+            color: #f5c842;
+            text-shadow: 0 0 40px rgba(245, 200, 66, 0.5);
+            z-index: 1;
+        }
+
+        /* Step 3: left + right split panels */
+        .curtain-h {
+            position: absolute;
+            top: 0;
+            width: 50.5%;
+            height: 100%;
+            background: #000;
+            will-change: transform;
+            z-index: 3;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .curtain-h--left {
+            left: 0;
+            border-right: 1px solid rgba(245, 200, 66, 0.15);
+        }
+
+        .curtain-h--right {
+            right: 0;
+            border-left: 1px solid rgba(245, 200, 66, 0.15);
+        }
+
+        .curtain-h .half-label {
+            position: absolute;
+            top: 50%;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(4rem, 12vw, 8rem);
+            color: rgba(245, 200, 66, 0.08);
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .curtain-h--left .half-label { right: 24px; }
+        .curtain-h--right .half-label { left: 24px; }
+
+        /* Progress dots */
+        .section-dots {
+            position: fixed;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 60;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: transparent;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .dot.is-active {
+            background: #f5c842;
+            border-color: #f5c842;
+            transform: scale(1.3);
+        }
+
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 55;
+            pointer-events: none;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        @media (max-width: 768px) {
+            .vision-inner {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .vision-visual {
+                height: 280px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    
+
+    <!-- LOADER -->
+    <div class="loader" id="loader">
+        <div class="loader-ring">
+            <svg viewBox="0 0 140 140">
+                <circle class="ring-bg" cx="70" cy="70" r="60" />
+                <circle class="ring-progress" id="ringProgress" cx="70" cy="70" r="60" />
+            </svg>
+            <div class="loader-spot" id="loaderSpot"></div>
+        </div>
+        <div class="loader-count" id="loaderCount">0<span>%</span></div>
+        <div class="loader-label" id="loaderLabel">Initializing Spotlight</div>
+        <div class="loader-flash" id="loaderFlash"></div>
+    </div>
+
+    <!-- IMAGE MONTAGE -->
+    <div class="image-stage" id="imageStage">
+        <div class="img-card" data-i="0"><img src="https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=600&q=80" alt=""><span class="img-num">01</span></div>
+        <div class="img-card" data-i="1"><img src="https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=600&q=80" alt=""><span class="img-num">02</span></div>
+        <div class="img-card" data-i="2"><img src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=600&q=80" alt=""><span class="img-num">03</span></div>
+        <div class="img-card" data-i="3"><img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80" alt=""><span class="img-num">04</span></div>
+        <div class="img-card" data-i="4"><img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80" alt=""><span class="img-num">05</span></div>
+        <div class="img-card" data-i="5"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt=""><span class="img-num">06</span></div>
+        <div class="img-card" data-i="6"><img src="https://images.unsplash.com/photo-1515462277126-270d878326e5?auto=format&fit=crop&w=600&q=80" alt=""><span class="img-num">07</span></div>
+        <div class="img-card" data-i="7"><img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=600&q=80" alt=""><span class="img-num">08</span></div>
+    </div>
+
+    <!-- SECTION 1 — HERO -->
+    <section class="section section--hero" id="section0" data-index="0">
+        <div class="hero-badge" id="heroBadge">
+            <span class="shine" id="badgeShine"></span>
+            Practise 08 — Spotlight
+        </div>
+        <h1 class="hero-title" id="heroTitle">
+            <span class="line">SPOTLIGHT</span>
+            <span class="line accent">REVEALED</span>
+        </h1>
+        <p class="hero-sub" id="heroSub">Eight frames. One beam of light. Scroll once to enter the next chapter.</p>
+        <div class="hero-cta" id="heroCta">
+            <a href="#" class="btn btn--gold">Enter Experience</a>
+            <a href="#" class="btn btn--outline">Watch Reel</a>
+        </div>
+        <div class="scroll-hint" id="scrollHint">
+            <div class="wheel"></div>
+            Scroll once
+        </div>
+    </section>
+
+    <!-- SECTION 2 — VISION -->
+    <section class="section section--vision" id="section1" data-index="1">
+        <div class="vision-inner">
+            <div class="vision-copy">
+                <div class="vision-label">Chapter 02</div>
+                <h2 class="vision-title">THE VISION<br>UNFOLDS</h2>
+                <p class="vision-text">Light doesn't just illuminate — it reveals. Every frame carries intention. Every motion tells a story the static world cannot.</p>
+                <div class="vision-stats">
+                    <div>
+                        <div class="stat-num" data-count="8">0</div>
+                        <div class="stat-label">Frames</div>
+                    </div>
+                    <div>
+                        <div class="stat-num" data-count="200">0</div>
+                        <div class="stat-label">% Motion</div>
+                    </div>
+                    <div>
+                        <div class="stat-num" data-count="3">0</div>
+                        <div class="stat-label">Sections</div>
+                    </div>
+                </div>
+            </div>
+            <div class="vision-visual">
+                <div class="vision-img vision-img--main">
+                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=700&q=80" alt="">
+                </div>
+                <div class="vision-img vision-img--sub">
+                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=500&q=80" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3 — GALLERY -->
+    <section class="section section--gallery" id="section2" data-index="2">
+        <div class="gallery-inner">
+            <div class="vision-label">Chapter 03</div>
+            <h2 class="gallery-title">FRAME ARCHIVE</h2>
+            <p class="gallery-sub">The complete collection — scroll up to revisit</p>
+            <div class="gallery-grid">
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=400&q=80" alt=""><span>01</span></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=400&q=80" alt=""><span>02</span></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=400&q=80" alt=""><span>03</span></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt=""><span>04</span></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1515462277126-270d878326e5?auto=format&fit=crop&w=400&q=80" alt=""><span>05</span></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=400&q=80" alt=""><span>06</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCROLL TRANSITION OVERLAY -->
+    <div class="transition-layer" id="transitionLayer">
+        <div class="curtain-v curtain-v--top" id="curtainTop"></div>
+        <div class="curtain-v curtain-v--bottom" id="curtainBottom"></div>
+        <div class="center-peek" id="centerPeek">
+            <img id="peekImg" src="" alt="">
+            <div class="center-peek-label" id="peekLabel">NEXT</div>
+        </div>
+        <div class="curtain-h curtain-h--left" id="curtainLeft">
+            <span class="half-label">SP</span>
+        </div>
+        <div class="curtain-h curtain-h--right" id="curtainRight">
+            <span class="half-label">OT</span>
+        </div>
+    </div>
+
+    <nav class="section-dots" id="sectionDots">
+        <div class="dot is-active" data-dot="0"></div>
+        <div class="dot" data-dot="1"></div>
+        <div class="dot" data-dot="2"></div>
+    </nav>
+
+    <div class="grain"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
+    <script src="https://unpkg.com/split-type@0.3.4/umd/index.min.js"></script>
+
+    <script>
+        gsap.config({ force3D: true });
+        gsap.registerPlugin(CustomEase);
+        CustomEase.create('cinematic', 'M0,0 C0.05,0.95 0.1,1 1,1');
+        CustomEase.create('snap', 'M0,0 C0.2,1.6 0.4,1 1,1');
+        CustomEase.create('zoom', 'M0,0 C0.15,1.4 0.3,1 1,1');
+
+        const sections = gsap.utils.toArray('.section');
+        const peekData = [
+            { label: 'VISION', img: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80' },
+            { label: 'GALLERY', img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80' },
+            { label: 'HERO', img: 'https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=1200&q=80' }
+        ];
+
+        peekData.forEach(p => { new Image().src = p.img; });
+
+        let currentSection = 0;
+        let transitioning = false;
+        let introDone = false;
+        let activeTransition = null;
+        const TOTAL = sections.length;
+        const TRANSITION_MS = 2400;
+
+        const loader = document.getElementById('loader');
+        const loaderCount = document.getElementById('loaderCount');
+        const loaderLabel = document.getElementById('loaderLabel');
+        const loaderSpot = document.getElementById('loaderSpot');
+        const loaderFlash = document.getElementById('loaderFlash');
+        const ringProgress = document.getElementById('ringProgress');
+        const imageStage = document.getElementById('imageStage');
+        const cards = gsap.utils.toArray('.img-card');
+        const CIRC = 377;
+
+        const transitionLayer = document.getElementById('transitionLayer');
+        const curtainTop = document.getElementById('curtainTop');
+        const curtainBottom = document.getElementById('curtainBottom');
+        const curtainLeft = document.getElementById('curtainLeft');
+        const curtainRight = document.getElementById('curtainRight');
+        const centerPeek = document.getElementById('centerPeek');
+        const peekImg = document.getElementById('peekImg');
+        const peekLabel = document.getElementById('peekLabel');
+
+        const labels = ['Initializing Spotlight', 'Loading Frames', 'Calibrating Motion', 'Syncing Beams', 'Almost There'];
+
+        new SplitType('#heroTitle', { types: 'chars' });
+        gsap.set('.hero-title .char', { y: '110%', rotate: 14, opacity: 0 });
+        gsap.set('#heroBadge, #heroSub, #heroCta', { opacity: 0 });
+        gsap.set('#heroBadge', { y: 40, scale: 0.8 });
+        gsap.set('#heroSub, #heroCta', { y: 30 });
+
+        const scatterPositions = [
+            { x: '-60vw', y: '-40vh', rot: -25, scale: 2.5 },
+            { x: '55vw', y: '-35vh', rot: 20, scale: 2.8 },
+            { x: '-50vw', y: '30vh', rot: -18, scale: 2.2 },
+            { x: '60vw', y: '25vh', rot: 30, scale: 3 },
+            { x: '-40vw', y: '-10vh', rot: -35, scale: 2.6 },
+            { x: '45vw', y: '40vh', rot: 22, scale: 2.4 },
+            { x: '-55vw', y: '45vh', rot: -28, scale: 2.9 },
+            { x: '50vw', y: '-45vh', rot: 35, scale: 2.7 }
+        ];
+
+        cards.forEach((card, i) => {
+            const p = scatterPositions[i];
+            gsap.set(card, { x: p.x, y: p.y, rotation: p.rot, scale: p.scale, opacity: 0, visibility: 'hidden', xPercent: -50, yPercent: -50, left: '50%', top: '50%' });
+        });
+
+        function initCurtains() {
+            gsap.set(curtainTop, { yPercent: -100, force3D: true });
+            gsap.set(curtainBottom, { yPercent: 100, force3D: true });
+            gsap.set([curtainLeft, curtainRight], { xPercent: 0, autoAlpha: 0, force3D: true });
+            gsap.set(centerPeek, { scaleY: 0, autoAlpha: 0, force3D: true });
+            gsap.set(peekImg, { scale: 1.15 });
+            gsap.set(transitionLayer, { autoAlpha: 0, visibility: 'hidden' });
+        }
+        initCurtains();
+
+        /* ── INTRO TIMELINE ── */
+        const counter = { val: 0 };
+        const master = gsap.timeline({ delay: 0.3, onComplete: onIntroComplete });
+
+        master
+            .to(counter, {
+                val: 100, duration: 2.8, ease: 'power2.inOut',
+                onUpdate() {
+                    const v = Math.round(counter.val);
+                    loaderCount.innerHTML = v + '<span>%</span>';
+                    ringProgress.style.strokeDashoffset = CIRC - (CIRC * counter.val / 100);
+                    loaderLabel.textContent = labels[Math.min(Math.floor(counter.val / 25), labels.length - 1)];
+                }
+            })
+            .to(loaderSpot, { scale: 1.8, duration: 2.8, ease: 'power2.out' }, 0)
+            .to(loaderCount, { scale: 1.08, duration: 0.15, yoyo: true, repeat: 18, ease: 'power1.inOut' }, 0)
+            .to(loaderFlash, { opacity: 0.9, duration: 0.12, ease: 'power4.in' }, 2.75)
+            .to(loaderFlash, { opacity: 0, duration: 0.5, ease: 'power2.out' }, 2.87)
+            .to(loader, { opacity: 0, duration: 0.6, ease: 'power3.inOut', onComplete() { loader.style.display = 'none'; } }, 3.1)
+            .set(cards, { visibility: 'visible' }, 3.0)
+            .to(cards, { opacity: 1, x: 0, y: 0, rotation: (i) => (i - 3.5) * 8, scale: 1, duration: 1.1, stagger: { each: 0.08, from: 'random' }, ease: 'snap' }, 3.1)
+            .to(cards.map(c => c.querySelector('img')), { scale: 1, duration: 1.1, stagger: { each: 0.08, from: 'random' }, ease: 'power3.out' }, 3.1);
+
+        cards.forEach((card, i) => {
+            const t = 4.3 + i * 0.45;
+            master
+                .to(card, { scale: 2.2, zIndex: 20, rotation: 0, duration: 0.35, ease: 'zoom' }, t)
+                .to(card.querySelector('img'), { scale: 1.4, duration: 0.35, ease: 'zoom' }, t)
+                .to(card, { x: (i - 3.5) * 90, y: Math.sin(i * 1.3) * 40, scale: 0.85, rotation: (i - 3.5) * 5, zIndex: i, duration: 0.4, ease: 'power3.inOut' }, t + 0.38)
+                .to(card.querySelector('img'), { scale: 1.15, duration: 0.4, ease: 'power3.inOut' }, t + 0.38);
+        });
+
+        master
+            .to(cards, { x: 0, y: 0, rotation: 0, scale: 3.5, duration: 0.7, stagger: { each: 0.03, from: 'center' }, ease: 'power4.in' }, 8.0)
+            .to(cards.map(c => c.querySelector('img')), { scale: 2, duration: 0.7, stagger: { each: 0.03, from: 'center' }, ease: 'power4.in' }, 8.0)
+            .to(cards, { scale: 5, opacity: 0, duration: 0.5, stagger: { each: 0.02, from: 'center' }, ease: 'power2.in' }, 8.65)
+            .set(imageStage, { display: 'none' }, 9.3)
+            .set('#section0', { visibility: 'visible' }, 8.5)
+            .to('#section0', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 8.5)
+            .to('.hero-title .char', { y: '0%', rotate: 0, opacity: 1, duration: 0.9, stagger: { each: 0.035, from: 'random' }, ease: 'snap' }, 8.7)
+            .to('#heroBadge', { y: 0, opacity: 1, scale: 1, duration: 0.7, ease: 'cinematic' }, 9.1)
+            .to('#heroSub', { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, 9.4)
+            .to('#heroCta', { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, 9.6)
+            .to('#scrollHint', { opacity: 1, duration: 0.6, ease: 'power2.out' }, 10.0)
+            .to('#sectionDots', { opacity: 1, duration: 0.6 }, 10.0);
+
+        function onIntroComplete() {
+            introDone = true;
+            sections[0].classList.add('is-active');
+            gsap.to('.hero-title .char', { y: '+=4', duration: 2, stagger: { each: 0.05, from: 'random', yoyo: true, repeat: -1 }, ease: 'sine.inOut' });
+            gsap.to('#badgeShine', { left: '150%', duration: 1.2, ease: 'power2.inOut', repeat: -1, repeatDelay: 3 });
+        }
+
+        /* ── SECTION CONTENT RESET / ENTER ── */
+        const sectionStates = {
+            1: {
+                targets: ['.vision-label', '.vision-title', '.vision-text', '.vision-stats > div'],
+                from: { y: 40, opacity: 0 },
+                extra: () => {
+                    gsap.set('.vision-img--main', { x: 60, scale: 0.9, opacity: 0 });
+                    gsap.set('.vision-img--sub', { x: -50, scale: 0.9, opacity: 0 });
+                }
+            },
+            2: {
+                targets: ['.gallery-title', '.gallery-sub'],
+                from: { y: 30, opacity: 0 },
+                extra: () => gsap.set('.gallery-item', { scale: 0.88, opacity: 0 })
+            }
+        };
+
+        function resetSectionContent(index) {
+            const cfg = sectionStates[index];
+            if (!cfg) return;
+            if (cfg.extra) cfg.extra();
+            gsap.set(cfg.targets, cfg.from);
+        }
+
+        function playSectionEnter(index) {
+            if (index === 1) {
+                gsap.set('.vision-img--main', { x: 60, scale: 0.9, opacity: 0 });
+                gsap.set('.vision-img--sub', { x: -50, scale: 0.9, opacity: 0 });
+
+                const tl = gsap.timeline();
+                tl.to('.vision-label', { y: 0, opacity: 1, duration: 0.65, ease: 'power3.out' })
+                    .to('.vision-title', { y: 0, opacity: 1, duration: 0.75, ease: 'power3.out' }, '-=0.45')
+                    .to('.vision-text', { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.5')
+                    .to('.vision-stats > div', { y: 0, opacity: 1, stagger: 0.1, duration: 0.55, ease: 'power3.out' }, '-=0.45')
+                    .to('.vision-img--main', { x: 0, opacity: 1, scale: 1, duration: 0.85, ease: 'power3.out' }, '-=0.7')
+                    .to('.vision-img--sub', { x: 0, opacity: 1, scale: 1, duration: 0.75, ease: 'power3.out' }, '-=0.65');
+
+                document.querySelectorAll('.stat-num').forEach(el => {
+                    const target = +el.dataset.count;
+                    const obj = { val: 0 };
+                    gsap.to(obj, {
+                        val: target, duration: 1.2, ease: 'power2.out', delay: 0.3,
+                        onUpdate() { el.textContent = Math.round(obj.val) + (target === 200 ? '%' : ''); }
+                    });
+                });
+            }
+
+            if (index === 2) {
+                resetSectionContent(2);
+                gsap.timeline()
+                    .to('.gallery-title', { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' })
+                    .to('.gallery-sub', { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out' }, '-=0.45')
+                    .to('.gallery-item', { scale: 1, opacity: 1, stagger: { each: 0.08, from: 'center' }, duration: 0.6, ease: 'power3.out' }, '-=0.35');
+            }
+
+            if (index === 0) {
+                gsap.to('.hero-title .char', { y: '0%', opacity: 1, duration: 0.5, stagger: 0.02, ease: 'power3.out' });
+            }
+        }
+
+        sections.forEach((_, i) => resetSectionContent(i));
+
+        /* ── SCROLL TRANSITION (smooth GPU sequence) ── */
+        function transitionTo(targetIndex) {
+            if (transitioning || !introDone || targetIndex === currentSection) return;
+            transitioning = true;
+
+            if (activeTransition) activeTransition.kill();
+            gsap.killTweensOf('.hero-title .char');
+
+            const fromIndex = currentSection;
+            const fromSection = sections[fromIndex];
+            const toSection = sections[targetIndex];
+            const peek = peekData[targetIndex];
+
+            peekImg.src = peek.img;
+            peekLabel.textContent = peek.label;
+            resetSectionContent(targetIndex);
+
+            initCurtains();
+            gsap.set(transitionLayer, { visibility: 'visible', autoAlpha: 1 });
+            gsap.set(toSection, { visibility: 'visible', opacity: 0 });
+            fromSection.classList.remove('is-active');
+            toSection.classList.remove('is-active');
+
+            activeTransition = gsap.timeline({
+                defaults: { ease: 'power3.inOut', force3D: true },
+                onComplete() {
+                    gsap.set(fromSection, { visibility: 'hidden', opacity: 0 });
+                    gsap.set(toSection, { opacity: 1, visibility: 'visible' });
+                    toSection.classList.add('is-active');
+                    currentSection = targetIndex;
+                    updateDots();
+                    initCurtains();
+                    transitioning = false;
+                    activeTransition = null;
+                    if (targetIndex === 0) {
+                        gsap.to('.hero-title .char', { y: '+=4', duration: 2, stagger: { each: 0.05, from: 'random', yoyo: true, repeat: -1 }, ease: 'sine.inOut' });
+                    }
+                }
+            });
+
+            /* STEP 1 — Top & bottom close */
+            activeTransition
+                .to(curtainTop, { yPercent: 0, duration: 0.75, ease: 'power3.inOut' }, 0)
+                .to(curtainBottom, { yPercent: 0, duration: 0.75, ease: 'power3.inOut' }, 0)
+                .to(fromSection, { opacity: 0, duration: 0.45, ease: 'power2.in' }, 0.05);
+
+            /* STEP 2 — Center peek expands */
+            activeTransition
+                .to(centerPeek, { autoAlpha: 1, scaleY: 1, duration: 0.5, ease: 'power3.out' }, 0.6)
+                .to(peekImg, { scale: 1, duration: 0.65, ease: 'power2.out' }, 0.6)
+                .fromTo(peekLabel, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'power2.out' }, 0.75);
+
+            /* STEP 3 — Hide vertical curtains, show horizontal split panels */
+            activeTransition
+                .to(centerPeek, { scaleY: 0, autoAlpha: 0, duration: 0.28, ease: 'power2.in' }, 1.15)
+                .set([curtainTop, curtainBottom], { autoAlpha: 0 }, 1.18)
+                .set([curtainLeft, curtainRight], { autoAlpha: 1, xPercent: 0 }, 1.18)
+                .set(toSection, { opacity: 1 }, 1.2);
+
+            /* STEP 4 — Left / right split open, revealing section underneath */
+            activeTransition
+                .to(curtainLeft, { xPercent: -100, duration: 0.85, ease: 'power4.inOut' }, 1.22)
+                .to(curtainRight, { xPercent: 100, duration: 0.85, ease: 'power4.inOut' }, 1.22)
+                .to(transitionLayer, { autoAlpha: 0, duration: 0.35, ease: 'power2.out' }, 1.75)
+                .add(() => playSectionEnter(targetIndex), 1.85);
+        }
+
+        function updateDots() {
+            document.querySelectorAll('.dot').forEach(d => {
+                d.classList.toggle('is-active', +d.dataset.dot === currentSection);
+            });
+        }
+
+        /* Smooth single-scroll trigger */
+        let scrollLocked = false;
+        let wheelAccum = 0;
+        let wheelResetTimer;
+
+        function handleScroll(dir) {
+            if (!introDone || transitioning || scrollLocked) return;
+            const next = currentSection + dir;
+            if (next < 0 || next >= TOTAL) return;
+
+            scrollLocked = true;
+            wheelAccum = 0;
+            transitionTo(next);
+            setTimeout(() => { scrollLocked = false; }, TRANSITION_MS);
+        }
+
+        window.addEventListener('wheel', (e) => {
+            if (!introDone) return;
+            e.preventDefault();
+
+            if (transitioning || scrollLocked) return;
+
+            wheelAccum += e.deltaY;
+            clearTimeout(wheelResetTimer);
+            wheelResetTimer = setTimeout(() => { wheelAccum = 0; }, 120);
+
+            if (Math.abs(wheelAccum) >= 60) {
+                handleScroll(wheelAccum > 0 ? 1 : -1);
+            }
+        }, { passive: false });
+
+        let touchY = 0;
+        window.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
+        window.addEventListener('touchend', (e) => {
+            const diff = touchY - e.changedTouches[0].clientY;
+            if (Math.abs(diff) > 45) handleScroll(diff > 0 ? 1 : -1);
+        });
+
+        document.querySelectorAll('.dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                const target = +dot.dataset.dot;
+                if (target !== currentSection && !transitioning && !scrollLocked) transitionTo(target);
+            });
+        });
+    </script>
+
 </body>
+
 </html>
