@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tariq Al Futtaim</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #9aa8ac;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            min-height: 600px;
+            overflow: hidden;
+        }
+
+        /* ── Background layers ── */
+        .hero__bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            transform-origin: center center;
+            will-change: transform;
+        }
+
+        .hero__bg-layer {
+            position: absolute;
+            inset: 0;
+            will-change: transform, opacity;
+        }
+
+        .hero__bg-sky {
+            overflow: hidden;
+        }
+
+        .hero__clouds {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+            transform-origin: center top;
+            will-change: transform;
+        }
+
+        .hero__cloud {
+            position: absolute;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.72);
+            filter: blur(22px);
+            opacity: 0;
+            transform-origin: center center;
+            will-change: transform, opacity;
+        }
+
+        .hero__cloud::before,
+        .hero__cloud::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: inherit;
+        }
+
+        .hero__cloud--1 {
+            width: 220px;
+            height: 64px;
+            top: 7%;
+            left: -18%;
+        }
+
+        .hero__cloud--1::before {
+            width: 92px;
+            height: 92px;
+            top: -42px;
+            left: 28px;
+        }
+
+        .hero__cloud--1::after {
+            width: 72px;
+            height: 72px;
+            top: -30px;
+            right: 36px;
+        }
+
+        .hero__cloud--2 {
+            width: 280px;
+            height: 78px;
+            top: 14%;
+            left: 35%;
+            opacity: 0;
+        }
+
+        .hero__cloud--2::before {
+            width: 110px;
+            height: 110px;
+            top: -52px;
+            left: 42px;
+        }
+
+        .hero__cloud--2::after {
+            width: 86px;
+            height: 86px;
+            top: -38px;
+            right: 54px;
+        }
+
+        .hero__cloud--3 {
+            width: 190px;
+            height: 56px;
+            top: 5%;
+            left: 68%;
+        }
+
+        .hero__cloud--3::before {
+            width: 78px;
+            height: 78px;
+            top: -36px;
+            left: 22px;
+        }
+
+        .hero__cloud--3::after {
+            width: 64px;
+            height: 64px;
+            top: -28px;
+            right: 28px;
+        }
+
+        .hero__cloud--4 {
+            width: 240px;
+            height: 70px;
+            top: 20%;
+            left: -8%;
+        }
+
+        .hero__cloud--4::before {
+            width: 96px;
+            height: 96px;
+            top: -46px;
+            left: 36px;
+        }
+
+        .hero__cloud--4::after {
+            width: 80px;
+            height: 80px;
+            top: -34px;
+            right: 40px;
+        }
+
+        .hero__bg-desert {
+            overflow: hidden;
+        }
+
+        .hero__bg-sky img,
+        .hero__bg-desert img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero__bg-sky img {
+            height: 115%;
+            object-position: center top;
+            transform-origin: center top;
+            will-change: transform, opacity;
+        }
+
+        .hero__bg-desert img {
+            height: 118%;
+            object-position: center 100%;
+            mix-blend-mode: screen;
+            transform-origin: center bottom;
+            will-change: transform, opacity;
+        }
+
+        .hero__bg-subject {
+            pointer-events: none;
+        }
+
+        .hero__subject-group {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-8%);
+            width: min(58vw, 760px);
+            height: 88%;
+            pointer-events: none;
+        }
+
+        .hero__subject-group img {
+            position: absolute;
+            bottom: 0;
+            width: auto;
+            max-width: none;
+            height: auto;
+            object-fit: contain;
+            object-position: center bottom;
+            mix-blend-mode: screen;
+        }
+
+        .hero__bg-flag {
+            left: 20%;
+            top: 22%;
+            height: 112%;
+            z-index: 3;
+            transform-origin: 3% 92%;
+        }
+
+        .hero__bg-person {
+            left: 8%;
+            height: 100%;
+            z-index: 4;
+        }
+
+        .hero__overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(6, 8, 10, 0.78) 0%,
+                    rgba(6, 8, 10, 0.52) 22%,
+                    rgba(6, 8, 10, 0.22) 42%,
+                    transparent 58%
+                ),
+                linear-gradient(
+                    180deg,
+                    rgba(6, 8, 10, 0.35) 0%,
+                    transparent 28%
+                );
+            opacity: 0;
+        }
+
+        /* ── Header ── */
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 2.5rem 4rem;
+        }
+
+        .header__logo {
+            width: 148px;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .header__logo.is-settled {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .logo-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 65;
+            pointer-events: none;
+        }
+
+        .header__logo img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .header__nav {
+            display: flex;
+            align-items: center;
+            gap: 2.75rem;
+            list-style: none;
+            padding-top: 0.35rem;
+        }
+
+        .header__nav li {
+            opacity: 0;
+            transform: translateY(-18px);
+        }
+
+        .header__nav a {
+            color: rgba(255, 255, 255, 0.92);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            position: relative;
+            padding-bottom: 0.35rem;
+            transition: color 0.3s ease;
+        }
+
+        .header__nav a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 1px;
+            background: #fff;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.35s ease;
+        }
+
+        .header__nav a:hover,
+        .header__nav a.is-active {
+            color: #fff;
+        }
+
+        .header__nav a.is-active::after,
+        .header__nav a:hover::after {
+            transform: scaleX(1);
+        }
+
+        /* ── Hero content ── */
+        .hero__content {
+            position: absolute;
+            z-index: 10;
+            left: 4rem;
+            bottom: 22%;
+            max-width: 520px;
+        }
+
+        .hero__title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+            font-weight: 400;
+            line-height: 1.15;
+            letter-spacing: -0.01em;
+            margin-bottom: 1.75rem;
+            opacity: 0;
+            transform: translateX(-40px);
+        }
+
+        .hero__title .line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero__title .line-inner {
+            display: block;
+            transform: translateY(110%);
+            opacity: 0;
+        }
+
+        .hero__text {
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 1.75;
+            color: rgba(255, 255, 255, 0.88);
+            margin-bottom: 2rem;
+        }
+
+        .hero__text .text-line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero__text .text-line-inner {
+            display: block;
+            transform: translateY(110%);
+            opacity: 0;
+        }
+
+        .hero__divider {
+            width: 48px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.7);
+            transform-origin: left center;
+            transform: scaleX(0);
+            opacity: 0;
+        }
+
+        /* ── Pagination ── */
+        .hero__pagination {
+            position: absolute;
+            z-index: 10;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.65rem;
+            opacity: 0;
+        }
+
+        .hero__dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.35);
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .hero__dot.is-active {
+            background: #fff;
+            transform: scale(1.15);
+        }
+
+        @media (max-width: 900px) {
+            .header {
+                padding: 1.5rem 1.75rem;
+            }
+
+            .header__logo {
+                width: 110px;
+            }
+
+            .header__nav {
+                gap: 1.25rem;
+            }
+
+            .header__nav a {
+                font-size: 0.8rem;
+            }
+
+            .hero__content {
+                left: 1.75rem;
+                right: 1.75rem;
+                bottom: 18%;
+                max-width: none;
+            }
+
+            .hero__subject-group {
+                width: 92vw;
+                height: 72%;
+                transform: translateX(-50%);
+            }
+
+            .hero__bg-person {
+                left: 4%;
+                height: 100%;
+            }
+
+            .hero__bg-flag {
+                left: 20%;
+                top: 22%;
+                height: 105%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="hero" id="hero">
+        <div class="hero__bg" id="heroBg">
+            <div class="hero__bg-layer hero__bg-sky" id="bgSky">
+                <img id="bgSkyImg" src="img/sky.jpg" alt="">
+                <div class="hero__clouds" id="skyClouds" aria-hidden="true">
+                    <span class="hero__cloud hero__cloud--1"></span>
+                    <span class="hero__cloud hero__cloud--2"></span>
+                    <span class="hero__cloud hero__cloud--3"></span>
+                    <span class="hero__cloud hero__cloud--4"></span>
+                </div>
+            </div>
+            <div class="hero__bg-layer hero__bg-desert" id="bgDesert">
+                <img id="bgDesertImg" src="img/disert.png" alt="">
+            </div>
+            <div class="hero__bg-layer hero__bg-subject">
+                <div class="hero__subject-group" id="bgSubject">
+                    <img class="hero__bg-flag" id="bgFlag" src="img/flag.png" alt="">
+                    <img class="hero__bg-person" id="bgPerson" src="img/person.png" alt="">
+                </div>
+            </div>
+        </div>
+
+        <div class="hero__overlay" id="heroOverlay" aria-hidden="true"></div>
+
+        <canvas class="logo-canvas" id="logoCanvas" aria-hidden="true"></canvas>
+
+        <header class="header">
+            <a href="#" class="header__logo" id="logo">
+                <img id="logoImg" src="img/full-logo.svg" alt="Tariq Al Futtaim">
+            </a>
+            <ul class="header__nav" id="nav">
+                <li><a href="#" class="is-active">Who we are</a></li>
+                <li><a href="#">What we do</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </header>
+
+        <div class="hero__content">
+            <h1 class="hero__title" id="heroTitle">
+                <span class="line"><span class="line-inner">Built in the UAE.</span></span>
+                <span class="line"><span class="line-inner">Trusted to Last.</span></span>
+            </h1>
+            <p class="hero__text" id="heroText">
+                <span class="text-line"><span class="text-line-inner">Tariq Al Futtaim is a private investment platform grounded in heritage.</span></span>
+                <span class="text-line"><span class="text-line-inner">From infrastructure to landmark spaces, we shape how the region moves,</span></span>
+                <span class="text-line"><span class="text-line-inner">live and connects.</span></span>
+            </p>
+            <div class="hero__divider" id="heroDivider"></div>
+        </div>
+
+        <div class="hero__pagination" id="pagination">
+            <span class="hero__dot is-active"></span>
+            <span class="hero__dot"></span>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+        gsap.config({ force3D: true });
+
+        const PARTICLE_COUNT = 2500;
+        const navItems = gsap.utils.toArray('.header__nav li');
+        const titleLines = gsap.utils.toArray('.hero__title .line-inner');
+        const textLines = gsap.utils.toArray('.hero__text .text-line-inner');
+        const logo = document.getElementById('logo');
+        const logoCanvas = document.getElementById('logoCanvas');
+        const logoImg = document.getElementById('logoImg');
+        const logoCtx = logoCanvas.getContext('2d');
+
+        let particles = [];
+        let particleFrame = null;
+        let booted = false;
+        let contentStarted = false;
+
+        function resizeLogoCanvas() {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            logoCanvas.width = window.innerWidth * dpr;
+            logoCanvas.height = window.innerHeight * dpr;
+            logoCanvas.style.width = `${window.innerWidth}px`;
+            logoCanvas.style.height = `${window.innerHeight}px`;
+            logoCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        resizeLogoCanvas();
+        window.addEventListener('resize', resizeLogoCanvas);
+
+        function sampleLogoParticles(img, count) {
+            const sampleWidth = 320;
+            const sampleHeight = Math.max(80, Math.round(sampleWidth * (img.naturalHeight / img.naturalWidth) || 0.55));
+            const off = document.createElement('canvas');
+            off.width = sampleWidth;
+            off.height = sampleHeight;
+            const offCtx = off.getContext('2d');
+            offCtx.drawImage(img, 0, 0, sampleWidth, sampleHeight);
+
+            const { data, width, height } = offCtx.getImageData(0, 0, sampleWidth, sampleHeight);
+            const candidates = [];
+
+            for (let y = 0; y < height; y += 2) {
+                for (let x = 0; x < width; x += 2) {
+                    const i = (y * width + x) * 4;
+                    if (data[i + 3] > 70) {
+                        candidates.push({
+                            tx: x - width / 2,
+                            ty: y - height / 2,
+                            color: `rgba(${data[i]}, ${data[i + 1]}, ${data[i + 2]}, ${data[i + 3] / 255})`
+                        });
+                    }
+                }
+            }
+
+            const picked = gsap.utils.shuffle(candidates).slice(0, count);
+            const scale = (window.innerWidth < 900 ? 0.78 : 1) * 1.05;
+            const halfW = (sampleWidth * scale) / 2;
+            const halfH = (sampleHeight * scale) / 2;
+
+            return picked.map((point, index) => {
+                const tx = point.tx * scale;
+                const ty = point.ty * scale;
+                const fromLeft = index % 2 === 0;
+                const sideOffset = 60 + Math.random() * 140;
+                const sx = fromLeft
+                    ? -window.innerWidth / 2 - sideOffset
+                    : window.innerWidth / 2 + sideOffset;
+                const sy = (Math.random() - 0.5) * window.innerHeight * 0.9;
+
+                return {
+                    x: sx,
+                    y: sy,
+                    tx,
+                    ty,
+                    nx: tx / halfW,
+                    ny: ty / halfH,
+                    row: (ty + halfH) / (halfH * 2),
+                    color: point.color,
+                    size: 1.4 + Math.random() * 1.8,
+                    rot: (Math.random() - 0.5) * 360,
+                    headerX: 0,
+                    headerY: 0
+                };
+            });
+        }
+
+        function setParticleHeaderTargets(layout) {
+            const cx = layout.center.x;
+            const cy = layout.center.y;
+            particles.forEach((p) => {
+                p.headerX = (layout.header.x - cx) + p.nx * (layout.header.w * 0.5);
+                p.headerY = (layout.header.y - cy) + p.ny * (layout.header.h * 0.5);
+            });
+        }
+
+        function drawParticles() {
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
+
+            logoCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+            particles.forEach((p) => {
+                logoCtx.save();
+                logoCtx.translate(cx + p.x, cy + p.y);
+                logoCtx.rotate((p.rot * Math.PI) / 180);
+                logoCtx.fillStyle = p.color;
+                logoCtx.beginPath();
+                logoCtx.arc(0, 0, p.size * 0.45, 0, Math.PI * 2);
+                logoCtx.fill();
+                logoCtx.restore();
+            });
+
+            particleFrame = requestAnimationFrame(drawParticles);
+        }
+
+        function stopParticleLoop() {
+            if (particleFrame) {
+                cancelAnimationFrame(particleFrame);
+                particleFrame = null;
+            }
+        }
+
+        function gatherParticles() {
+            return new Promise((resolve) => {
+                const gather = gsap.timeline({ onComplete: resolve });
+                particles.forEach((p, i) => {
+                    gather.to(p, {
+                        x: p.tx,
+                        y: p.ty,
+                        rot: 0,
+                        duration: 1.2 + Math.random() * 0.5,
+                        ease: 'power3.out'
+                    }, i * 0.00028);
+                });
+            });
+        }
+
+        function splitParticlesToHeader() {
+            return new Promise((resolve) => {
+                const splitDuration = 0.35;
+                const splitStagger = 0.025;
+                const travelStagger = 0.04;
+
+                const splitTl = gsap.timeline({
+                    onComplete: () => {
+                        stopParticleLoop();
+                        gsap.to(logoCanvas, {
+                            opacity: 0,
+                            duration: 0.3,
+                            ease: 'power2.inOut',
+                            onComplete: () => {
+                                logoCanvas.style.display = 'none';
+                                logo.classList.add('is-settled');
+                                gsap.fromTo(logo,
+                                    { opacity: 0, visibility: 'visible' },
+                                    {
+                                        opacity: 1,
+                                        duration: 0.45,
+                                        ease: 'power2.out',
+                                        onComplete: resolve
+                                    }
+                                );
+                            }
+                        });
+                    }
+                });
+
+                particles.forEach((p) => {
+                    const splitDelay = p.row * splitStagger;
+                    const splitX = p.nx * 22;
+                    const splitY = p.ny * 14;
+
+                    splitTl.to(p, {
+                        x: p.tx + splitX,
+                        y: p.ty + splitY,
+                        duration: splitDuration,
+                        ease: 'power2.out'
+                    }, splitDelay);
+
+                    splitTl.to(p, {
+                        x: p.headerX,
+                        y: p.headerY,
+                        rot: 0,
+                        duration: 1,
+                        ease: 'power3.inOut'
+                    }, splitDelay + splitDuration * 0.35);
+                });
+            });
+        }
+
+        function runLogoIntro() {
+            return new Promise(async (resolve) => {
+                if (!logoImg.naturalWidth) {
+                    logo.classList.add('is-settled');
+                    gsap.set(logo, { opacity: 1, visibility: 'visible' });
+                    resolve();
+                    return;
+                }
+
+                const layout = getLogoLayout();
+
+                logoCanvas.style.display = 'block';
+                gsap.set(logoCanvas, { opacity: 1 });
+
+                particles = sampleLogoParticles(logoImg, PARTICLE_COUNT);
+                setParticleHeaderTargets(layout);
+                drawParticles();
+
+                await gatherParticles();
+                await new Promise((r) => gsap.delayedCall(0.3, r));
+                await splitParticlesToHeader();
+                resolve();
+            });
+        }
+
+        function getLogoLayout() {
+            const header = document.querySelector('.header');
+            const styles = getComputedStyle(header);
+            const padLeft = parseFloat(styles.paddingLeft) || 64;
+            const padTop = parseFloat(styles.paddingTop) || 40;
+            const finalWidth = window.innerWidth < 900 ? 110 : 148;
+            const aspect = logoImg.naturalHeight / logoImg.naturalWidth || 0.55;
+            const finalHeight = finalWidth * aspect;
+            const centerWidth = window.innerWidth < 900 ? 180 : 240;
+
+            return {
+                center: {
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    w: centerWidth,
+                    h: centerWidth * aspect
+                },
+                header: {
+                    x: padLeft + finalWidth / 2,
+                    y: padTop + finalHeight / 2,
+                    w: finalWidth,
+                    h: finalHeight
+                }
+            };
+        }
+
+        function showSubjectIntro() {
+            gsap.set('#bgSubject', { visibility: 'visible' });
+
+            return gsap.timeline({ defaults: { ease: 'power3.out' } })
+                .to('#bgSubject', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.9,
+                    ease: 'power3.out'
+                })
+                .to('#bgPerson', {
+                    opacity: 1,
+                    duration: 0.7,
+                    ease: 'power3.out'
+                }, '-=0.65')
+                .to('#bgFlag', {
+                    opacity: 1,
+                    x: 0,
+                    rotation: 0,
+                    duration: 0.75,
+                    ease: 'power3.out',
+                    onComplete: () => {
+                        gsap.to('#bgFlag', {
+                            rotation: 2.5,
+                            duration: 3.5,
+                            ease: 'sine.inOut',
+                            repeat: -1,
+                            yoyo: true
+                        });
+                    }
+                }, '-=0.55');
+        }
+
+        function startCloudDrift() {
+            const clouds = gsap.utils.toArray('.hero__cloud');
+
+            gsap.to(clouds, {
+                opacity: (i) => 0.34 + i * 0.08,
+                duration: 1.8,
+                stagger: 0.15,
+                ease: 'power2.out'
+            });
+
+            gsap.to('#bgSkyImg', {
+                xPercent: -7,
+                scale: 1.15,
+                duration: 20,
+                ease: 'sine.inOut',
+                yoyo: true,
+                repeat: -1
+            });
+
+            gsap.to('#skyClouds', {
+                scale: 1.06,
+                x: 18,
+                duration: 24,
+                ease: 'sine.inOut',
+                yoyo: true,
+                repeat: -1
+            });
+
+            clouds.forEach((cloud, i) => {
+                const travel = 38 + i * 12;
+                const startX = -(cloud.offsetWidth + 140);
+                const endX = window.innerWidth + 140;
+                const midX = window.innerWidth * 0.48;
+
+                gsap.timeline({ repeat: -1 })
+                    .fromTo(cloud,
+                        { x: startX, scale: 0.72 + i * 0.03 },
+                        { x: midX, scale: 1.18 + i * 0.04, duration: travel * 0.52, ease: 'power1.out' }
+                    )
+                    .to(cloud, {
+                        x: endX,
+                        scale: 0.78 + i * 0.03,
+                        duration: travel * 0.48,
+                        ease: 'power1.in'
+                    });
+            });
+        }
+
+        function startBackgroundIntro() {
+            gsap.set('#heroBg', { opacity: 1, scale: 1 });
+            gsap.set('#bgSkyImg', { yPercent: -100, opacity: 0, scale: 1 });
+            gsap.set('#bgDesert', { y: '16%', opacity: 1 });
+            gsap.set('#bgDesertImg', { scale: 0.94, y: 36 });
+            gsap.set('#heroOverlay', { opacity: 0 });
+
+            const bgIntro = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+            bgIntro
+                .to('#bgSkyImg', {
+                    yPercent: 0,
+                    opacity: 1,
+                    duration: 1.5,
+                    ease: 'power2.out'
+                }, 0)
+                .to('#bgDesert', {
+                    y: '0%',
+                    duration: 1.5,
+                    ease: 'power3.out'
+                }, 0)
+                .to('#bgDesertImg', {
+                    scale: 1.22,
+                    y: 12,
+                    duration: 0.85,
+                    ease: 'power2.out'
+                }, 0)
+                .to('#bgDesertImg', {
+                    scale: 1,
+                    y: 0,
+                    duration: 1.15,
+                    ease: 'power2.inOut'
+                }, 0.75)
+                .to('#heroOverlay', {
+                    opacity: 1,
+                    duration: 1.2,
+                    ease: 'power2.out'
+                }, 0)
+                .to('#bgSkyImg', {
+                    scale: 1.07,
+                    duration: 1,
+                    ease: 'power2.inOut'
+                })
+                .add(startCloudDrift, '-=0.4')
+                .add(showSubjectIntro(), '-=0.1');
+
+            return bgIntro;
+        }
+
+        function startContentIntro() {
+            if (contentStarted) return;
+            contentStarted = true;
+
+            gsap.set('.hero__content, .hero__pagination', { opacity: 1 });
+
+            const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+            intro
+                .to(navItems, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.45,
+                    stagger: 0.07,
+                    ease: 'power3.out'
+                })
+                .to(titleLines, {
+                    y: '0%',
+                    opacity: 1,
+                    duration: 0.65,
+                    stagger: 0.1,
+                    ease: 'power4.out'
+                }, '-=0.15')
+                .to('#heroTitle', {
+                    opacity: 1,
+                    x: 0,
+                    duration: 0.01
+                }, '-=0.65')
+                .to(textLines, {
+                    y: '0%',
+                    opacity: 1,
+                    duration: 0.6,
+                    stagger: 0.08,
+                    ease: 'power3.out'
+                }, '-=0.35')
+                .to('#heroDivider', {
+                    opacity: 1,
+                    scaleX: 1,
+                    duration: 0.5,
+                    ease: 'power2.inOut'
+                }, '-=0.25')
+                .to('#pagination', {
+                    opacity: 1,
+                    duration: 0.45,
+                    ease: 'power2.out'
+                }, '-=0.3');
+        }
+
+        gsap.set('.hero__content, .hero__pagination', { opacity: 0 });
+        gsap.set(navItems, { opacity: 0, y: -18 });
+        gsap.set(titleLines, { y: '110%', opacity: 0 });
+        gsap.set(textLines, { y: '110%', opacity: 0 });
+        gsap.set('#heroTitle', { opacity: 0, x: -40 });
+        gsap.set('#heroDivider', { opacity: 0, scaleX: 0 });
+        gsap.set('#bgSubject', { opacity: 0, visibility: 'hidden', y: 24 });
+        gsap.set('#bgPerson', { opacity: 0 });
+        gsap.set('#bgFlag', { x: 24, opacity: 0, rotation: -4 });
+
+        function boot() {
+            if (booted) return;
+            booted = true;
+
+            startBackgroundIntro();
+            runLogoIntro();
+
+            gsap.delayedCall(1.6, startContentIntro);
+        }
+
+        if (logoImg.complete && logoImg.naturalWidth) {
+            boot();
+        } else {
+            logoImg.addEventListener('load', boot, { once: true });
+            logoImg.addEventListener('error', boot, { once: true });
+        }
+    </script>
+</body>
+</html>
