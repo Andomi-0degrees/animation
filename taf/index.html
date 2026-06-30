@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
+        /* STEP 1 — Reset: remove default spacing and use border-box sizing */
         *,
         *::before,
         *::after {
@@ -18,6 +19,7 @@
             box-sizing: border-box;
         }
 
+        /* STEP 2 — Full-viewport canvas; overflow hidden so parallax layers don't scroll */
         html,
         body {
             width: 100%;
@@ -29,6 +31,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* STEP 3 — Hero section fills the screen and clips all layered content */
         .hero {
             position: relative;
             width: 100%;
@@ -37,7 +40,7 @@
             overflow: hidden;
         }
 
-        /* ── Background layers ── */
+        /* STEP 4 — Background stack: sky → desert → subject (flag + person) */
         .hero__bg {
             position: absolute;
             inset: 0;
@@ -66,6 +69,7 @@
             will-change: transform;
         }
 
+        /* STEP 5 — Clouds are blurred pill shapes (pseudo-elements add puffs); start invisible for GSAP fade-in */
         .hero__cloud {
             position: absolute;
             border-radius: 999px;
@@ -180,6 +184,7 @@
             object-fit: cover;
         }
 
+        /* STEP 6 — Sky image oversized so GSAP can pan/scale without showing edges */
         .hero__bg-sky img {
             height: 115%;
             object-position: center top;
@@ -187,6 +192,7 @@
             will-change: transform, opacity;
         }
 
+        /* STEP 7 — Desert uses screen blend to composite cleanly over the sky */
         .hero__bg-desert img {
             height: 118%;
             object-position: center 100%;
@@ -234,6 +240,7 @@
             z-index: 4;
         }
 
+        /* STEP 8 — Dark gradient overlay for text contrast; opacity animated in on load */
         .hero__overlay {
             position: absolute;
             inset: 0;
@@ -255,7 +262,7 @@
             opacity: 0;
         }
 
-        /* ── Header ── */
+        /* STEP 9 — Header sits above background; logo hidden until particle intro finishes */
         .header {
             position: absolute;
             top: 0;
@@ -279,6 +286,7 @@
             visibility: visible;
         }
 
+        /* STEP 10 — Full-screen canvas draws logo particles during the intro sequence */
         .logo-canvas {
             position: fixed;
             inset: 0;
@@ -300,6 +308,7 @@
             padding-top: 0.35rem;
         }
 
+        /* STEP 11 — Nav items start off-screen; GSAP staggers them down on content intro */
         .header__nav li {
             opacity: 0;
             transform: translateY(-18px);
@@ -339,7 +348,7 @@
             transform: scaleX(1);
         }
 
-        /* ── Hero content ── */
+        /* STEP 12 — Hero copy: title/text use overflow-hidden wrappers for slide-up reveal */
         .hero__content {
             position: absolute;
             z-index: 10;
@@ -364,6 +373,7 @@
             overflow: hidden;
         }
 
+        /* Inner line starts below its clip box (110%) — GSAP animates to y: 0% */
         .hero__title .line-inner {
             display: block;
             transform: translateY(110%);
@@ -396,31 +406,6 @@
             transform-origin: left center;
             transform: scaleX(0);
             opacity: 0;
-        }
-
-        /* ── Pagination ── */
-        .hero__pagination {
-            position: absolute;
-            z-index: 10;
-            bottom: 2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 0.65rem;
-            opacity: 0;
-        }
-
-        .hero__dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.35);
-            transition: background 0.3s ease, transform 0.3s ease;
-        }
-
-        .hero__dot.is-active {
-            background: #fff;
-            transform: scale(1.15);
         }
 
         @media (max-width: 900px) {
@@ -468,8 +453,15 @@
 </head>
 <body>
 
+    <!-- ═══════════════════════════════════════════════════════════
+         HERO SECTION — layered parallax background + intro animations
+         ═══════════════════════════════════════════════════════════ -->
     <section class="hero" id="hero">
+
+        <!-- LAYER STACK (back → front): sky, desert, subject -->
         <div class="hero__bg" id="heroBg">
+
+            <!-- Layer 1: Sky image + drifting cloud shapes -->
             <div class="hero__bg-layer hero__bg-sky" id="bgSky">
                 <img id="bgSkyImg" src="img/sky.jpg" alt="">
                 <div class="hero__clouds" id="skyClouds" aria-hidden="true">
@@ -479,9 +471,13 @@
                     <span class="hero__cloud hero__cloud--4"></span>
                 </div>
             </div>
+
+            <!-- Layer 2: Desert foreground (slides up on intro) -->
             <div class="hero__bg-layer hero__bg-desert" id="bgDesert">
                 <img id="bgDesertImg" src="img/disert.png" alt="">
             </div>
+
+            <!-- Layer 3: Flag + person (revealed after sky/desert settle) -->
             <div class="hero__bg-layer hero__bg-subject">
                 <div class="hero__subject-group" id="bgSubject">
                     <img class="hero__bg-flag" id="bgFlag" src="img/flag.png" alt="">
@@ -490,10 +486,13 @@
             </div>
         </div>
 
+        <!-- Gradient vignette for readable text -->
         <div class="hero__overlay" id="heroOverlay" aria-hidden="true"></div>
 
+        <!-- Canvas overlay for particle logo intro (hidden after animation) -->
         <canvas class="logo-canvas" id="logoCanvas" aria-hidden="true"></canvas>
 
+        <!-- Header: logo + navigation -->
         <header class="header">
             <a href="#" class="header__logo" id="logo">
                 <img id="logoImg" src="img/full-logo.svg" alt="Tariq Al Futtaim">
@@ -505,6 +504,7 @@
             </ul>
         </header>
 
+        <!-- Hero copy: each line wrapped for independent slide-up reveal -->
         <div class="hero__content">
             <h1 class="hero__title" id="heroTitle">
                 <span class="line"><span class="line-inner">Built in the UAE.</span></span>
@@ -517,17 +517,24 @@
             </p>
             <div class="hero__divider" id="heroDivider"></div>
         </div>
-
-        <div class="hero__pagination" id="pagination">
-            <span class="hero__dot is-active"></span>
-            <span class="hero__dot"></span>
-        </div>
     </section>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script>
-        gsap.config({ force3D: true });
+        /*
+         * ═══════════════════════════════════════════════════════════════
+         *  ANIMATION OVERVIEW (runs on page load)
+         * ═══════════════════════════════════════════════════════════════
+         *
+         *  STEP A — boot() fires when logo image is ready
+         *  STEP B — startBackgroundIntro()  → sky slides down, desert rises, clouds drift
+         *  STEP C — runLogoIntro()          → particles fly in, form logo, split to header
+         *  STEP D — startContentIntro()     → nav, title, text, divider (after 1.6s)
+         */
 
+        gsap.config({ force3D: true }); // GPU-accelerate transforms
+
+        // ── DOM references & constants ──
         const PARTICLE_COUNT = 2500;
         const navItems = gsap.utils.toArray('.header__nav li');
         const titleLines = gsap.utils.toArray('.hero__title .line-inner');
@@ -537,11 +544,13 @@
         const logoImg = document.getElementById('logoImg');
         const logoCtx = logoCanvas.getContext('2d');
 
+        // State flags — prevent double-boot and double content intro
         let particles = [];
         let particleFrame = null;
         let booted = false;
         let contentStarted = false;
 
+        // ── STEP C.1 — Size canvas to viewport (retina-aware) ──
         function resizeLogoCanvas() {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
             logoCanvas.width = window.innerWidth * dpr;
@@ -554,6 +563,8 @@
         resizeLogoCanvas();
         window.addEventListener('resize', resizeLogoCanvas);
 
+        // ── STEP C.2 — Sample logo pixels into particle targets ──
+        // Draws logo to offscreen canvas, picks opaque pixels, assigns start positions off-screen
         function sampleLogoParticles(img, count) {
             const sampleWidth = 320;
             const sampleHeight = Math.max(80, Math.round(sampleWidth * (img.naturalHeight / img.naturalWidth) || 0.55));
@@ -584,6 +595,7 @@
             const halfW = (sampleWidth * scale) / 2;
             const halfH = (sampleHeight * scale) / 2;
 
+            // Each particle: start off left/right edge, target (tx, ty) forms logo shape in center
             return picked.map((point, index) => {
                 const tx = point.tx * scale;
                 const ty = point.ty * scale;
@@ -611,6 +623,7 @@
             });
         }
 
+        // ── STEP C.3 — Pre-calculate where each particle lands in the header logo slot ──
         function setParticleHeaderTargets(layout) {
             const cx = layout.center.x;
             const cy = layout.center.y;
@@ -620,6 +633,7 @@
             });
         }
 
+        // ── STEP C.4 — requestAnimationFrame loop: draw all particles each frame ──
         function drawParticles() {
             const cx = window.innerWidth / 2;
             const cy = window.innerHeight / 2;
@@ -647,6 +661,7 @@
             }
         }
 
+        // ── STEP C.5 — Phase 1: particles fly from screen edges → logo center ──
         function gatherParticles() {
             return new Promise((resolve) => {
                 const gather = gsap.timeline({ onComplete: resolve });
@@ -662,6 +677,8 @@
             });
         }
 
+        // ── STEP C.6 — Phase 2: particles burst outward, then travel to header logo position ──
+        // On complete: hide canvas, fade in the real <img> logo
         function splitParticlesToHeader() {
             return new Promise((resolve) => {
                 const splitDuration = 0.35;
@@ -715,8 +732,10 @@
             });
         }
 
+        // ── STEP C — Logo intro orchestrator ──
         function runLogoIntro() {
             return new Promise(async (resolve) => {
+                // Fallback if logo image failed to load
                 if (!logoImg.naturalWidth) {
                     logo.classList.add('is-settled');
                     gsap.set(logo, { opacity: 1, visibility: 'visible' });
@@ -729,6 +748,7 @@
                 logoCanvas.style.display = 'block';
                 gsap.set(logoCanvas, { opacity: 1 });
 
+                // Sample → draw loop → gather → pause → split to header
                 particles = sampleLogoParticles(logoImg, PARTICLE_COUNT);
                 setParticleHeaderTargets(layout);
                 drawParticles();
@@ -740,6 +760,7 @@
             });
         }
 
+        // Measure center-screen logo size vs final header logo position
         function getLogoLayout() {
             const header = document.querySelector('.header');
             const styles = getComputedStyle(header);
@@ -766,6 +787,7 @@
             };
         }
 
+        // ── STEP B.3 — Reveal flag + person after background settles ──
         function showSubjectIntro() {
             gsap.set('#bgSubject', { visibility: 'visible' });
 
@@ -799,6 +821,7 @@
                 }, '-=0.55');
         }
 
+        // ── STEP B.2 — Continuous ambient motion: cloud fade-in, sky pan, cloud drift loops ──
         function startCloudDrift() {
             const clouds = gsap.utils.toArray('.hero__cloud');
 
@@ -833,6 +856,7 @@
                 const endX = window.innerWidth + 140;
                 const midX = window.innerWidth * 0.48;
 
+                // Each cloud: enter from left → pause mid-screen → exit right (infinite loop)
                 gsap.timeline({ repeat: -1 })
                     .fromTo(cloud,
                         { x: startX, scale: 0.72 + i * 0.03 },
@@ -847,6 +871,8 @@
             });
         }
 
+        // ── STEP B — Background intro timeline ──
+        // Sky drops in from above, desert rises, overlay fades, then clouds + subject
         function startBackgroundIntro() {
             gsap.set('#heroBg', { opacity: 1, scale: 1 });
             gsap.set('#bgSkyImg', { yPercent: -100, opacity: 0, scale: 1 });
@@ -857,17 +883,20 @@
             const bgIntro = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
             bgIntro
+                // B.1a — Sky image slides down from above (yPercent: -100 → 0)
                 .to('#bgSkyImg', {
                     yPercent: 0,
                     opacity: 1,
                     duration: 1.5,
                     ease: 'power2.out'
                 }, 0)
+                // B.1b — Desert layer rises into place
                 .to('#bgDesert', {
                     y: '0%',
                     duration: 1.5,
                     ease: 'power3.out'
                 }, 0)
+                // B.1c — Desert overshoots scale (zoom punch) then settles
                 .to('#bgDesertImg', {
                     scale: 1.22,
                     y: 12,
@@ -880,31 +909,35 @@
                     duration: 1.15,
                     ease: 'power2.inOut'
                 }, 0.75)
+                // B.1d — Dark vignette overlay fades in for text legibility
                 .to('#heroOverlay', {
                     opacity: 1,
                     duration: 1.2,
                     ease: 'power2.out'
                 }, 0)
+                // B.1e — Subtle sky zoom after reveal
                 .to('#bgSkyImg', {
                     scale: 1.07,
                     duration: 1,
                     ease: 'power2.inOut'
                 })
-                .add(startCloudDrift, '-=0.4')
-                .add(showSubjectIntro(), '-=0.1');
+                .add(startCloudDrift, '-=0.4')      // B.2 — ambient cloud motion
+                .add(showSubjectIntro(), '-=0.1');  // B.3 — flag + person reveal
 
             return bgIntro;
         }
 
+        // ── STEP D — Text & UI reveal (nav → title → body → divider) ──
         function startContentIntro() {
             if (contentStarted) return;
             contentStarted = true;
 
-            gsap.set('.hero__content, .hero__pagination', { opacity: 1 });
+            gsap.set('.hero__content', { opacity: 1 });
 
             const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
             intro
+                // D.1 — Nav links drop down with stagger
                 .to(navItems, {
                     opacity: 1,
                     y: 0,
@@ -912,6 +945,7 @@
                     stagger: 0.07,
                     ease: 'power3.out'
                 })
+                // D.2 — Title lines slide up from clip mask
                 .to(titleLines, {
                     y: '0%',
                     opacity: 1,
@@ -924,6 +958,7 @@
                     x: 0,
                     duration: 0.01
                 }, '-=0.65')
+                // D.3 — Body text lines reveal
                 .to(textLines, {
                     y: '0%',
                     opacity: 1,
@@ -931,20 +966,17 @@
                     stagger: 0.08,
                     ease: 'power3.out'
                 }, '-=0.35')
+                // D.4 — Horizontal divider scales in
                 .to('#heroDivider', {
                     opacity: 1,
                     scaleX: 1,
                     duration: 0.5,
                     ease: 'power2.inOut'
-                }, '-=0.25')
-                .to('#pagination', {
-                    opacity: 1,
-                    duration: 0.45,
-                    ease: 'power2.out'
-                }, '-=0.3');
+                }, '-=0.25');
         }
 
-        gsap.set('.hero__content, .hero__pagination', { opacity: 0 });
+        // ── INITIAL STATE — hide everything before boot() runs ──
+        gsap.set('.hero__content', { opacity: 0 });
         gsap.set(navItems, { opacity: 0, y: -18 });
         gsap.set(titleLines, { y: '110%', opacity: 0 });
         gsap.set(textLines, { y: '110%', opacity: 0 });
@@ -954,16 +986,18 @@
         gsap.set('#bgPerson', { opacity: 0 });
         gsap.set('#bgFlag', { x: 24, opacity: 0, rotation: -4 });
 
+        // ── STEP A — Entry point: kick off all intro sequences once ──
         function boot() {
             if (booted) return;
             booted = true;
 
-            startBackgroundIntro();
-            runLogoIntro();
+            startBackgroundIntro();   // B: parallax layers
+            runLogoIntro();           // C: particle logo (runs in parallel)
 
-            gsap.delayedCall(1.6, startContentIntro);
+            gsap.delayedCall(1.6, startContentIntro); // D: copy after background has room
         }
 
+        // Wait for logo SVG to load (or error) before starting animations
         if (logoImg.complete && logoImg.naturalWidth) {
             boot();
         } else {
