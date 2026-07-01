@@ -7,7 +7,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 
     <style>
         /* STEP 1 — Reset: remove default spacing and use border-box sizing */
@@ -19,12 +19,17 @@
             box-sizing: border-box;
         }
 
-        /* STEP 2 — Full-viewport canvas; overflow hidden so parallax layers don't scroll */
+        /* STEP 2 — Page scrolls; hero stays full viewport */
+        html {
+            scroll-behavior: smooth;
+        }
+
         html,
         body {
             width: 100%;
-            height: 100%;
-            overflow: hidden;
+            min-height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
             background: #9aa8ac;
             color: #fff;
             font-family: 'Inter', sans-serif;
@@ -408,6 +413,460 @@
             opacity: 0;
         }
 
+        /* ── Heritage section (section 2) ── */
+        .heritage {
+            position: relative;
+            background: #0a1222;
+        }
+
+        .heritage__scroll {
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .heritage__sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            perspective: 1400px;
+        }
+
+        .heritage__bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .heritage__bg-parallax {
+            position: absolute;
+            inset: -8%;
+            will-change: transform;
+        }
+
+        .heritage__bg-track {
+            display: flex;
+            width: calc(200% + 2px);
+            height: 100%;
+            will-change: transform;
+        }
+
+        .heritage__bg-track img {
+            flex: 0 0 calc(50% + 1px);
+            width: calc(50% + 1px);
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .heritage__bg-spotlight {
+            position: absolute;
+            width: min(40vw, 480px);
+            height: min(40vw, 480px);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(140, 170, 200, 0.12) 0%,
+                transparent 62%
+            );
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+            will-change: left, top, opacity;
+        }
+
+        .heritage__bg-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            background:
+                linear-gradient(to bottom, rgba(8, 14, 26, 0.75) 0%, transparent 14%),
+                rgba(10, 18, 34, 0.48);
+        }
+
+        .heritage__inner {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 clamp(1.75rem, 4vw, 4rem);
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            gap: clamp(2.5rem, 5vw, 5rem);
+            align-items: center;
+        }
+
+        .heritage__copy {
+            max-width: 500px;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .heritage__eyebrow {
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: #c8b07a;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .heritage__title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.6rem, 4.8vw, 4rem);
+            font-weight: 400;
+            line-height: 1.08;
+            letter-spacing: 0.02em;
+            color: #f4efe6;
+            margin-bottom: 1.75rem;
+        }
+
+        .heritage__title em {
+            display: block;
+            font-style: italic;
+            color: #c8b07a;
+            margin-top: 0.12em;
+        }
+
+        .heritage__title .line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .heritage__title .line-inner {
+            display: block;
+            transform: translateY(108%);
+            opacity: 0;
+        }
+
+        .heritage__text {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.92rem, 1.05vw, 1rem);
+            font-weight: 300;
+            line-height: 1.9;
+            letter-spacing: 0.02em;
+            color: rgba(255, 255, 255, 0.78);
+        }
+
+        .heritage__text .text-line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .heritage__text .text-line-inner {
+            display: block;
+            transform: translateY(105%);
+            opacity: 0;
+        }
+
+        .heritage__visual-slot {
+            justify-self: end;
+            width: min(100%, 480px);
+            aspect-ratio: 4 / 5;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .heritage__visual {
+            position: absolute;
+            z-index: 4;
+            overflow: visible;
+            box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+            border-radius: 2px;
+            will-change: left, top, width, height, transform;
+            cursor: pointer;
+            transform-style: preserve-3d;
+        }
+
+        .heritage__visual-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 2px;
+            transform-style: preserve-3d;
+            transform-origin: center center;
+            will-change: transform;
+        }
+
+        .heritage__visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            transform: translateZ(28px) scale(1.08);
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        .heritage__spotlight {
+            position: absolute;
+            width: 160%;
+            height: 160%;
+            left: -30%;
+            top: -30%;
+            background: radial-gradient(
+                circle at center,
+                rgba(200, 176, 122, 0.28) 0%,
+                rgba(255, 255, 255, 0.06) 28%,
+                transparent 58%
+            );
+            opacity: 0;
+            pointer-events: none;
+            z-index: 3;
+            mix-blend-mode: soft-light;
+            will-change: transform, opacity;
+        }
+
+        .heritage__img-vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                ellipse 85% 85% at 50% 50%,
+                transparent 35%,
+                rgba(8, 14, 26, 0.45) 100%
+            );
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.55;
+            transition: opacity 0.5s ease;
+        }
+
+        .heritage__visual.is-hover .heritage__img-vignette {
+            opacity: 0.2;
+        }
+
+        .heritage__frame-glow {
+            position: absolute;
+            inset: -1px;
+            border-radius: 3px;
+            box-shadow:
+                0 0 0 1px rgba(200, 176, 122, 0),
+                0 0 48px rgba(200, 176, 122, 0);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 6;
+            transition: opacity 0.45s ease;
+        }
+
+        .heritage__visual.is-hover .heritage__frame-glow {
+            opacity: 1;
+            box-shadow:
+                0 0 0 1px rgba(200, 176, 122, 0.55),
+                0 0 56px rgba(200, 176, 122, 0.22);
+        }
+
+        .heritage__ripple {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            margin: -6px 0 0 -6px;
+            border-radius: 50%;
+            border: 1px solid rgba(200, 176, 122, 0.65);
+            pointer-events: none;
+            z-index: 7;
+            opacity: 0;
+            transform: scale(0.2);
+        }
+
+        /* ── Vision section (section 3) — layered scene assembly ── */
+        .vision {
+            position: relative;
+            background: #0a1222;
+            margin-top: -1px;
+        }
+
+        .vision__scroll {
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .vision__sticky {
+            position: relative;
+            top: 0;
+            height: 100vh;
+            min-height: 560px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .vision__sky {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            background: #0a1222;
+        }
+
+        .vision__sky-inner {
+            position: absolute;
+            inset: -8%;
+            will-change: transform, opacity;
+            transform-origin: center 38%;
+        }
+
+        .vision__sky img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 115%;
+            object-fit: cover;
+            object-position: center top;
+            transform-origin: center 38%;
+            will-change: transform;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .vision__sky-spotlight {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.88);
+            transform-origin: center 36%;
+            background: radial-gradient(
+                ellipse 52% 42% at 50% 34%,
+                rgba(255, 255, 255, 0.22) 0%,
+                rgba(255, 255, 255, 0.08) 34%,
+                transparent 68%
+            );
+            mix-blend-mode: soft-light;
+            will-change: transform, opacity;
+        }
+
+        .vision__sky-vignette {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            background: radial-gradient(
+                ellipse 90% 80% at 50% 42%,
+                transparent 42%,
+                rgba(8, 12, 18, 0.42) 100%
+            );
+            opacity: 0;
+            will-change: opacity;
+        }
+
+        .vision__scene {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .vision__layer {
+            position: absolute;
+            inset: 0;
+            will-change: transform, opacity;
+            transform-origin: center bottom;
+        }
+
+        .vision__layer-inner {
+            position: absolute;
+            inset: 0;
+            will-change: transform;
+        }
+
+        .vision__layer img {
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            transform: translateX(-50%);
+            object-fit: cover;
+            object-position: bottom center;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .vision__layer--skyline { z-index: 1; }
+        .vision__layer--museum { z-index: 2; }
+        .vision__layer--base { z-index: 3; }
+        .vision__layer--mound { z-index: 4; }
+        .vision__layer--building { z-index: 5; }
+        .vision__layer--ground { z-index: 6; }
+
+        .vision__overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0;
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(6, 8, 10, 0.82) 0%,
+                    rgba(6, 8, 10, 0.5) 28%,
+                    rgba(6, 8, 10, 0.18) 48%,
+                    transparent 62%
+                ),
+                linear-gradient(
+                    180deg,
+                    rgba(6, 8, 10, 0.38) 0%,
+                    transparent 30%
+                );
+        }
+
+        .vision__content {
+            position: absolute;
+            z-index: 3;
+            left: clamp(1.75rem, 4vw, 4rem);
+            bottom: clamp(14%, 18vh, 22%);
+            max-width: min(540px, 88vw);
+            pointer-events: none;
+        }
+
+        .vision__quote {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.55rem, 2.6vw, 2.15rem);
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.45;
+            letter-spacing: 0.01em;
+            color: rgba(255, 255, 255, 0.94);
+            margin-bottom: 1.35rem;
+        }
+
+        .vision__quote .quote-line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .vision__quote .quote-line-inner {
+            display: block;
+            transform: translateY(108%);
+            opacity: 0;
+        }
+
+        .vision__attribution {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.82rem, 0.95vw, 0.92rem);
+            font-weight: 400;
+            font-style: normal;
+            letter-spacing: 0.04em;
+            color: rgba(255, 255, 255, 0.72);
+            opacity: 0;
+            transform: translateY(24px);
+        }
+
         @media (max-width: 900px) {
             .header {
                 padding: 1.5rem 1.75rem;
@@ -447,6 +906,36 @@
                 left: 20%;
                 top: 22%;
                 height: 105%;
+            }
+
+            .heritage__inner {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .heritage__copy {
+                max-width: none;
+            }
+
+            .heritage__visual-slot {
+                justify-self: center;
+                width: min(100%, 380px);
+                margin-top: 2.5rem;
+            }
+
+            .heritage__scroll {
+                min-height: 100vh;
+            }
+
+            .vision__content {
+                left: 1.75rem;
+                right: 1.75rem;
+                bottom: 12%;
+                max-width: none;
+            }
+
+            .vision__quote {
+                font-size: clamp(1.35rem, 5.2vw, 1.75rem);
             }
         }
     </style>
@@ -519,7 +1008,112 @@
         </div>
     </section>
 
+    <section class="heritage" id="heart">
+        <div class="heritage__scroll">
+            <div class="heritage__sticky">
+                <div class="heritage__bg" id="heritageBg">
+                    <div class="heritage__bg-parallax" id="heritageBgParallax">
+                        <div class="heritage__bg-track" id="heritageBgTrack">
+                            <img src="img/blue-bg-with-line.png" alt="">
+                            <img src="img/blue-bg-with-line.png" alt="" aria-hidden="true">
+                        </div>
+                    </div>
+                    <div class="heritage__bg-spotlight" id="heritageBgSpotlight" aria-hidden="true"></div>
+                    <div class="heritage__bg-overlay" aria-hidden="true"></div>
+                </div>
+
+                <div class="heritage__inner">
+                    <div class="heritage__copy" id="heritageCopy">
+                        <span class="heritage__eyebrow" id="heritageEyebrow">Our Philosophy</span>
+                        <h2 class="heritage__title" id="heritageTitle">
+                            <span class="line"><span class="line-inner">The Heart</span></span>
+                            <em class="line"><span class="line-inner">of Our Work</span></em>
+                        </h2>
+                        <p class="heritage__text" id="heritageText">
+                            <span class="text-line"><span class="text-line-inner">We create with purpose. Every line drawn, every detail chosen,</span></span>
+                            <span class="text-line"><span class="text-line-inner">is part of a deliberate process to deliver work that holds its worth over time.</span></span>
+                            <span class="text-line"><span class="text-line-inner">Our projects serve people, strengthen the future, and honour the trust placed in our name.</span></span>
+                        </p>
+                    </div>
+                    <div class="heritage__visual-slot" id="heritageVisualSlot"></div>
+                </div>
+
+                <div class="heritage__visual" id="heritageVisual">
+                    <div class="heritage__frame-glow" id="heritageFrameGlow" aria-hidden="true"></div>
+                    <div class="heritage__visual-inner" id="heritageVisualInner">
+                        <img id="heritageVisualImg" src="img/with-eagle.png" alt="Heritage and tradition — man with child and falcon">
+                        <div class="heritage__img-vignette" aria-hidden="true"></div>
+                        <div class="heritage__spotlight" id="heritageSpotlight" aria-hidden="true"></div>
+                    </div>
+                    <div class="heritage__ripple" id="heritageRipple" aria-hidden="true"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         VISION SECTION — layered Dubai scene assembles on scroll
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="vision" id="build">
+        <div class="vision__scroll" id="visionScroll">
+            <div class="vision__sticky">
+                <div class="vision__sky" id="visionSky" aria-hidden="true">
+                    <div class="vision__sky-inner" id="visionSkyInner">
+                        <img id="visionSkyImg" src="img/bg/sky.jpg" alt="">
+                    </div>
+                    <div class="vision__sky-spotlight" id="visionSkySpotlight"></div>
+                    <div class="vision__sky-vignette" id="visionSkyVignette"></div>
+                </div>
+
+                <div class="vision__scene" id="visionScene">
+                    <div class="vision__layer vision__layer--skyline" data-depth="34">
+                        <div class="vision__layer-inner vision__layer-parallax" data-parallax="-3">
+                            <img src="img/bg/bg-1.png" alt="">
+                        </div>
+                    </div>
+                    <div class="vision__layer vision__layer--museum" data-depth="28">
+                        <div class="vision__layer-inner vision__layer-parallax" data-parallax="-1.5">
+                            <img src="img/bg/bg-2.png" alt="">
+                        </div>
+                    </div>
+                    <div class="vision__layer vision__layer--base" data-depth="30">
+                        <div class="vision__layer-inner vision__layer-parallax" data-parallax="-2">
+                            <img src="img/bg/bg-6.png" alt="">
+                        </div>
+                    </div>
+                    <div class="vision__layer vision__layer--mound" data-depth="24">
+                        <div class="vision__layer-inner">
+                            <img src="img/bg/bg-3.png" alt="">
+                        </div>
+                    </div>
+                    <div class="vision__layer vision__layer--building" data-depth="20">
+                        <div class="vision__layer-inner vision__layer-parallax" data-parallax="2">
+                            <img src="img/bg/bg-4.png" alt="">
+                        </div>
+                    </div>
+                    <div class="vision__layer vision__layer--ground" data-depth="16">
+                        <div class="vision__layer-inner vision__layer-parallax" data-parallax="4">
+                            <img src="img/bg/bg-5.png" alt="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vision__overlay" id="visionOverlay" aria-hidden="true"></div>
+
+                <div class="vision__content" id="visionContent">
+                    <blockquote class="vision__quote" id="visionQuote">
+                        <span class="quote-line"><span class="quote-line-inner">&ldquo;What we build should last. Not just now, but</span></span>
+                        <span class="quote-line"><span class="quote-line-inner">long after we are gone. It should hold meaning,</span></span>
+                        <span class="quote-line"><span class="quote-line-inner">show care, and carry forward what we stand for.&rdquo;</span></span>
+                    </blockquote>
+                    <cite class="vision__attribution" id="visionAttribution">Tariq Al Futtaim, Founder</cite>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script>
         /*
          * ═══════════════════════════════════════════════════════════════
@@ -1004,6 +1598,466 @@
             logoImg.addEventListener('load', boot, { once: true });
             logoImg.addEventListener('error', boot, { once: true });
         }
+
+        // ── Heritage section — image centered first, one smooth scroll reveal ──
+        gsap.registerPlugin(ScrollTrigger);
+
+        const heritageTitleLines = gsap.utils.toArray('.heritage__title .line-inner');
+        const heritageTextLines = gsap.utils.toArray('.heritage__text .text-line-inner');
+        const heritageCopy = document.getElementById('heritageCopy');
+        const heritageEyebrow = document.getElementById('heritageEyebrow');
+        const heritageVisual = document.getElementById('heritageVisual');
+        const heritageVisualImg = document.getElementById('heritageVisualImg');
+        const heritageVisualSlot = document.getElementById('heritageVisualSlot');
+        const heritageSticky = document.querySelector('.heritage__sticky');
+        const heritageRipple = document.getElementById('heritageRipple');
+        const heritageVisualInner = document.getElementById('heritageVisualInner');
+        const heritageSpotlight = document.getElementById('heritageSpotlight');
+        const heritageBgTrack = document.getElementById('heritageBgTrack');
+        const heritageBgParallax = document.getElementById('heritageBgParallax');
+        const heritageBgSpotlight = document.getElementById('heritageBgSpotlight');
+        let heritageScrollTween = null;
+        let heritageFloatTween = null;
+        let heritageBgMarquee = null;
+        let heritageHoverActive = false;
+
+        const bgParallaxX = gsap.quickTo(heritageBgParallax, 'x', { duration: 0.85, ease: 'power2.out' });
+        const bgParallaxY = gsap.quickTo(heritageBgParallax, 'y', { duration: 0.85, ease: 'power2.out' });
+        const bgSpotOpacity = gsap.quickTo(heritageBgSpotlight, 'opacity', { duration: 0.5, ease: 'power2.out' });
+
+        const cardTiltY = gsap.quickTo(heritageVisualInner, 'rotateY', { duration: 0.5, ease: 'power2.out' });
+        const cardTiltX = gsap.quickTo(heritageVisualInner, 'rotateX', { duration: 0.5, ease: 'power2.out' });
+        const cardLiftZ = gsap.quickTo(heritageVisualInner, 'z', { duration: 0.5, ease: 'power2.out' });
+        const cardImgX = gsap.quickTo(heritageVisualImg, 'x', { duration: 0.55, ease: 'power2.out' });
+        const cardImgY = gsap.quickTo(heritageVisualImg, 'y', { duration: 0.55, ease: 'power2.out' });
+        const cardShadowY = gsap.quickTo(heritageVisual, 'y', { duration: 0.55, ease: 'power2.out' });
+
+        function resetHeritageCardTilt() {
+            cardTiltY(0);
+            cardTiltX(0);
+            cardLiftZ(0);
+            cardImgX(0);
+            cardImgY(0);
+            cardShadowY(0);
+            gsap.to(heritageVisualImg, {
+                z: 28,
+                scale: 1.08,
+                duration: 0.65,
+                ease: 'power3.out'
+            });
+        }
+
+        function applyHeritageCardTilt(x, y) {
+            const tiltY = x * 18;
+            const tiltX = -y * 14;
+
+            cardTiltY(tiltY);
+            cardTiltX(tiltX);
+            cardLiftZ(36);
+            cardImgX(-x * 32);
+            cardImgY(-y * 28);
+            cardShadowY(y * 6 + 4);
+
+            gsap.to(heritageVisualImg, {
+                z: 42,
+                scale: 1.12,
+                duration: 0.45,
+                ease: 'power2.out',
+                overwrite: 'auto'
+            });
+        }
+
+        function startHeritageFloat() {
+            if (heritageFloatTween || heritageHoverActive) return;
+            heritageFloatTween = gsap.to(heritageVisualInner, {
+                y: -5,
+                duration: 2.6,
+                ease: 'sine.inOut',
+                yoyo: true,
+                repeat: -1
+            });
+        }
+
+        function stopHeritageFloat() {
+            if (heritageFloatTween) {
+                heritageFloatTween.kill();
+                heritageFloatTween = null;
+            }
+            gsap.to(heritageVisualInner, { y: 0, duration: 0.5, ease: 'power2.out' });
+        }
+
+        gsap.set(heritageVisualInner, { transformPerspective: 900 });
+        gsap.set(heritageVisualImg, { z: 28, scale: 1.08 });
+
+        function initHeritageImageHover() {
+            const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+            if (!canHover) {
+                startHeritageFloat();
+                return;
+            }
+
+            heritageVisual.addEventListener('mouseenter', () => {
+                heritageHoverActive = true;
+                heritageVisual.classList.add('is-hover');
+                stopHeritageFloat();
+                gsap.to(heritageVisual, {
+                    boxShadow: '0 42px 110px rgba(0, 0, 0, 0.58)',
+                    duration: 0.5,
+                    ease: 'power2.out'
+                });
+            });
+
+            heritageVisual.addEventListener('mousemove', (e) => {
+                const rect = heritageVisual.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+                applyHeritageCardTilt(x, y);
+
+                gsap.set(heritageRipple, {
+                    left: (x + 0.5) * 100 + '%',
+                    top: (y + 0.5) * 100 + '%'
+                });
+            });
+
+            heritageVisual.addEventListener('mouseleave', () => {
+                heritageHoverActive = false;
+                heritageVisual.classList.remove('is-hover');
+                resetHeritageCardTilt();
+                gsap.to(heritageVisual, {
+                    boxShadow: '0 28px 80px rgba(0, 0, 0, 0.45)',
+                    duration: 0.75,
+                    ease: 'power3.out'
+                });
+                startHeritageFloat();
+            });
+
+            heritageVisual.addEventListener('click', (e) => {
+                const rect = heritageVisual.getBoundingClientRect();
+                const px = ((e.clientX - rect.left) / rect.width) * 100;
+                const py = ((e.clientY - rect.top) / rect.height) * 100;
+
+                gsap.fromTo(heritageRipple, {
+                    left: px + '%',
+                    top: py + '%',
+                    opacity: 0.9,
+                    scale: 0.2
+                }, {
+                    opacity: 0,
+                    scale: 3.2,
+                    duration: 0.85,
+                    ease: 'power2.out'
+                });
+            });
+
+            startHeritageFloat();
+        }
+
+        function startHeritageBgMarquee() {
+            if (heritageBgMarquee) heritageBgMarquee.kill();
+
+            heritageBgMarquee = gsap.fromTo(heritageBgTrack, {
+                xPercent: -50
+            }, {
+                xPercent: 0,
+                duration: 42,
+                ease: 'none',
+                repeat: -1
+            });
+        }
+
+        function initHeritageBgMouse() {
+            const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+            if (!canHover) return;
+
+            heritageSticky.addEventListener('mousemove', (e) => {
+                const rect = heritageSticky.getBoundingClientRect();
+                const px = (e.clientX - rect.left) / rect.width;
+                const py = (e.clientY - rect.top) / rect.height;
+                const x = px - 0.5;
+                const y = py - 0.5;
+
+                bgParallaxX(x * 32);
+                bgParallaxY(y * 26);
+                gsap.to(heritageBgSpotlight, {
+                    left: px * 100 + '%',
+                    top: py * 100 + '%',
+                    duration: 0.7,
+                    ease: 'power2.out'
+                });
+                bgSpotOpacity(0.35);
+            });
+
+            heritageSticky.addEventListener('mouseleave', () => {
+                bgParallaxX(0);
+                bgParallaxY(0);
+                bgSpotOpacity(0);
+            });
+        }
+
+        function getHeritagePositions() {
+            const stickyRect = heritageSticky.getBoundingClientRect();
+            const slotRect = heritageVisualSlot.getBoundingClientRect();
+            const isMobile = window.innerWidth < 900;
+            const centerW = isMobile
+                ? Math.min(stickyRect.width * 0.76, 380)
+                : Math.min(stickyRect.width * 0.44, 480);
+            const centerH = centerW * 1.25;
+
+            return {
+                center: {
+                    left: (stickyRect.width - centerW) / 2,
+                    top: (stickyRect.height - centerH) / 2,
+                    width: centerW,
+                    height: centerH
+                },
+                final: {
+                    left: slotRect.left - stickyRect.left,
+                    top: slotRect.top - stickyRect.top,
+                    width: slotRect.width,
+                    height: slotRect.height
+                }
+            };
+        }
+
+        function placeHeritageImageCenter() {
+            const { center } = getHeritagePositions();
+            gsap.set(heritageVisual, {
+                left: center.left,
+                top: center.top,
+                width: center.width,
+                height: center.height,
+                opacity: 1,
+                rotateY: 0,
+                rotateX: 0,
+                transformPerspective: 900
+            });
+        }
+
+        function initHeritageScroll() {
+            if (heritageScrollTween) {
+                heritageScrollTween.scrollTrigger.kill();
+                heritageScrollTween.kill();
+            }
+
+            const { center, final } = getHeritagePositions();
+
+            gsap.set(heritageVisual, {
+                left: center.left,
+                top: center.top,
+                width: center.width,
+                height: center.height,
+                opacity: 1,
+                rotateY: 0,
+                rotateX: 0,
+                transformPerspective: 900
+            });
+            gsap.set(heritageVisualImg, { z: 28, scale: 1.08 });
+            gsap.set(heritageCopy, { opacity: 0, visibility: 'hidden', x: -32 });
+            gsap.set(heritageEyebrow, { y: 20, opacity: 0 });
+            gsap.set(heritageTitleLines, { y: '108%', opacity: 0 });
+            gsap.set(heritageTextLines, { y: '105%', opacity: 0 });
+
+            heritageScrollTween = gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.heritage__scroll',
+                    start: 'top top',
+                    end: '+=90%',
+                    pin: '.heritage__sticky',
+                    pinSpacing: true,
+                    scrub: 0.65,
+                    anticipatePin: 1,
+                    invalidateOnRefresh: true
+                }
+            });
+
+            heritageScrollTween
+                .to(heritageVisualImg, { scale: 1, ease: 'none' }, 0)
+                .to(heritageBgParallax, { scale: 1.03, ease: 'none' }, 0)
+                .to({}, { duration: 0.1 })
+                .to(heritageVisual, {
+                    left: final.left,
+                    top: final.top,
+                    width: final.width,
+                    height: final.height,
+                    rotateY: -5,
+                    rotateX: 1,
+                    ease: 'power2.inOut'
+                })
+                .to(heritageCopy, {
+                    opacity: 1,
+                    visibility: 'visible',
+                    x: 0,
+                    ease: 'power2.out'
+                }, '-=0.55')
+                .to(heritageEyebrow, { y: 0, opacity: 1, ease: 'power2.out' }, '-=0.45')
+                .to(heritageTitleLines, {
+                    y: '0%',
+                    opacity: 1,
+                    stagger: 0.08,
+                    ease: 'power3.out'
+                }, '-=0.38')
+                .to(heritageTextLines, {
+                    y: '0%',
+                    opacity: 1,
+                    stagger: 0.07,
+                    ease: 'power3.out'
+                }, '-=0.2');
+        }
+
+        placeHeritageImageCenter();
+        initHeritageScroll();
+        initHeritageImageHover();
+        startHeritageBgMarquee();
+        initHeritageBgMouse();
+
+        gsap.to(heritageBgParallax, {
+            yPercent: -4,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '.heritage__scroll',
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 1.2
+            }
+        });
+
+        let heritageResizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(heritageResizeTimer);
+            heritageResizeTimer = setTimeout(() => {
+                placeHeritageImageCenter();
+                initHeritageScroll();
+                startHeritageBgMarquee();
+                initVisionScroll();
+                ScrollTrigger.refresh();
+            }, 150);
+        });
+
+        ScrollTrigger.addEventListener('refreshInit', placeHeritageImageCenter);
+
+        // ── Vision section — scroll-scrubbed layer assembly ──
+        const visionLayers = gsap.utils.toArray('.vision__layer');
+        const visionQuoteLines = gsap.utils.toArray('.vision__quote .quote-line-inner');
+        const visionOverlay = document.getElementById('visionOverlay');
+        const visionAttribution = document.getElementById('visionAttribution');
+        const visionSkyInner = document.getElementById('visionSkyInner');
+        const visionSkyImg = document.getElementById('visionSkyImg');
+        const visionSkySpotlight = document.getElementById('visionSkySpotlight');
+        const visionSkyVignette = document.getElementById('visionSkyVignette');
+        const visionLayerOrder = gsap.utils.shuffle(visionLayers.slice());
+        let visionScrollTween = null;
+        let visionSkyDriftTween = null;
+
+        function getVisionStartY(layer) {
+            const depth = Number(layer.dataset.depth) || 24;
+            return `${depth}vh`;
+        }
+
+        function startVisionSkyDrift() {
+            if (visionSkyDriftTween) visionSkyDriftTween.kill();
+
+            visionSkyDriftTween = gsap.timeline({ repeat: -1, yoyo: true, defaults: { ease: 'sine.inOut' } })
+                .to(visionSkyImg, { scale: 1.1, xPercent: -3.5, duration: 16 }, 0)
+                .to(visionSkySpotlight, { scale: 1.12, opacity: 0.62, duration: 7 }, 0)
+                .to(visionSkyVignette, { opacity: 0.55, duration: 10 }, 0);
+        }
+
+        function stopVisionSkyDrift() {
+            if (!visionSkyDriftTween) return;
+            visionSkyDriftTween.kill();
+            visionSkyDriftTween = null;
+        }
+
+        function resetVisionScene() {
+            stopVisionSkyDrift();
+
+            gsap.set(visionSkyInner, { y: 0, opacity: 1, scale: 1 });
+            gsap.set(visionSkyImg, { scale: 1.04, xPercent: 0 });
+            gsap.set(visionSkySpotlight, { opacity: 0.35, scale: 1 });
+            gsap.set(visionSkyVignette, { opacity: 0.22 });
+
+            visionLayers.forEach((layer) => {
+                gsap.set(layer, {
+                    y: getVisionStartY(layer),
+                    opacity: 0,
+                    scale: 1.035
+                });
+            });
+            gsap.set(visionOverlay, { opacity: 0 });
+            gsap.set(visionQuoteLines, { y: '108%', opacity: 0 });
+            gsap.set(visionAttribution, { y: 24, opacity: 0 });
+        }
+
+        function initVisionScroll() {
+            if (visionScrollTween) {
+                visionScrollTween.scrollTrigger?.kill();
+                visionScrollTween.kill();
+            }
+
+            resetVisionScene();
+
+            const layerSlot = 0.1;
+            const textStart = 0.08 + visionLayerOrder.length * layerSlot;
+
+            visionScrollTween = gsap.timeline({
+                scrollTrigger: {
+                    trigger: '#visionScroll',
+                    start: 'top top',
+                    end: '+=125%',
+                    pin: '.vision__sticky',
+                    pinSpacing: true,
+                    scrub: 0.75,
+                    anticipatePin: 1,
+                    invalidateOnRefresh: true,
+                    onLeave: startVisionSkyDrift,
+                    onEnterBack: stopVisionSkyDrift
+                }
+            });
+
+            visionScrollTween
+                .to(visionSkyImg, { scale: 1.08, ease: 'none' }, 0)
+                .to(visionSkySpotlight, { opacity: 0.5, scale: 1.05, ease: 'none' }, 0)
+                .to(visionSkyVignette, { opacity: 0.4, ease: 'none' }, 0)
+                .to({}, { duration: 0.05 });
+
+            visionLayerOrder.forEach((layer, index) => {
+                visionScrollTween.to(layer, {
+                    y: 0,
+                    opacity: 1,
+                    scale: 1,
+                    ease: 'none',
+                    duration: layerSlot
+                }, 0.06 + index * layerSlot);
+            });
+
+            visionScrollTween
+                .to(visionOverlay, { opacity: 1, ease: 'none', duration: 0.08 }, textStart)
+                .to(visionQuoteLines, {
+                    y: '0%',
+                    opacity: 1,
+                    stagger: 0.02,
+                    ease: 'none',
+                    duration: 0.1
+                }, textStart + 0.02)
+                .to(visionAttribution, {
+                    y: 0,
+                    opacity: 1,
+                    ease: 'none',
+                    duration: 0.08
+                }, textStart + 0.08);
+        }
+
+        initVisionScroll();
+
+        let visionResizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(visionResizeTimer);
+            visionResizeTimer = setTimeout(() => {
+                initVisionScroll();
+                ScrollTrigger.refresh();
+            }, 150);
+        });
     </script>
 </body>
 </html>
