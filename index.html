@@ -3,111 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canvas Practice Hub</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Spotlight Hub — Animation Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/site-nav.css">
     <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             min-height: 100vh;
+            background: #05070d;
+            color: #fff;
+            font-family: 'Outfit', system-ui, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .spotlight-hero {
+            position: relative;
+            min-height: calc(100vh - 64px);
             display: flex;
-            flex-direction: column;
-            background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
-        main {
-            flex: 1;
+
+        .spotlight-hero__bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 50% 40%, rgba(245, 200, 66, 0.08), transparent 42%),
+                linear-gradient(180deg, #070b14 0%, #05070d 100%);
         }
-        .hero-card {
-            background: linear-gradient(135deg, #0f172a, #1e40af);
+
+        .spotlight-hero__beam {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(
+                circle 220px at var(--mx, 50%) var(--my, 40%),
+                rgba(245, 200, 66, 0.22) 0%,
+                rgba(245, 200, 66, 0.06) 28%,
+                transparent 62%
+            );
+            transition: background 0.08s linear;
         }
-        .page-link {
+
+        .spotlight-hero__grid {
+            position: absolute;
+            inset: 0;
+            opacity: 0.18;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 40%), #000 0%, transparent 68%);
+            -webkit-mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 40%), #000 0%, transparent 68%);
+        }
+
+        .spotlight-hero__content {
+            position: relative;
+            z-index: 2;
+            max-width: 920px;
+            padding: 2rem 1.5rem 4rem;
+            text-align: center;
+        }
+
+        .spotlight-hero__eyebrow {
+            display: inline-block;
+            margin-bottom: 1rem;
+            padding: 0.35rem 0.9rem;
+            border: 1px solid rgba(245, 200, 66, 0.35);
+            border-radius: 999px;
+            color: #f5c842;
+            font-size: 0.78rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .spotlight-hero__title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3.5rem, 10vw, 7rem);
+            line-height: 0.92;
+            letter-spacing: 0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .spotlight-hero__title em {
+            color: #f5c842;
+            font-style: normal;
+        }
+
+        .spotlight-hero__text {
+            max-width: 620px;
+            margin: 0 auto 2rem;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: clamp(1rem, 2vw, 1.15rem);
+            line-height: 1.7;
+        }
+
+        .spotlight-hero__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.85rem 1.35rem;
+            border-radius: 999px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn--gold {
+            background: #f5c842;
+            color: #111;
+            box-shadow: 0 10px 30px rgba(245, 200, 66, 0.22);
+        }
+
+        .btn--ghost {
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .pages-section {
+            padding: 1rem 1.5rem 4.5rem;
+        }
+
+        .pages-section__inner {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .pages-section__head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pages-section__head h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            letter-spacing: 0.04em;
+        }
+
+        .pages-section__head p {
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 0.92rem;
+        }
+
+        .pages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        .page-card {
+            display: block;
             text-decoration: none;
             color: inherit;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 1.25rem;
+            transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
         }
-        .page-link:hover {
-            color: inherit;
+
+        .page-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(245, 200, 66, 0.45);
+            background: rgba(245, 200, 66, 0.06);
+        }
+
+        .page-card__tag {
+            display: inline-block;
+            margin-bottom: 0.75rem;
+            padding: 0.25rem 0.55rem;
+            border-radius: 999px;
+            background: rgba(245, 200, 66, 0.12);
+            color: #f5c842;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .page-card__title {
+            font-size: 1.08rem;
+            font-weight: 600;
+            margin-bottom: 0.45rem;
+        }
+
+        .page-card__desc {
+            color: rgba(255, 255, 255, 0.58);
+            font-size: 0.88rem;
+            line-height: 1.55;
+        }
+
+        .site-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.25rem 1.5rem 2rem;
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.85rem;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <header class="shadow-sm bg-white">
-        <nav class="navbar navbar-expand-lg container py-3">
-            <a class="navbar-brand fw-bold text-primary" href="#">Canvas Practice</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navLinks">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="canvas-practise/practise-1.html">Practice 1</a></li>
-                    <li class="nav-item"><a class="nav-link" href="canvas-practise/practise-2.html">Practice 2</a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+    <section class="spotlight-hero" id="spotlightHero">
+        <div class="spotlight-hero__bg" aria-hidden="true"></div>
+        <div class="spotlight-hero__beam" id="spotlightBeam" aria-hidden="true"></div>
+        <div class="spotlight-hero__grid" id="spotlightGrid" aria-hidden="true"></div>
 
-    <main>
-        <section class="py-5">
-            <div class="container">
-                <div class="hero-card text-white rounded-4 p-5 shadow-lg">
-                    <div class="row align-items-center g-4">
-                        <div class="col-lg-7">
-                            <p class="text-light mb-2">Welcome</p>
-                            <h1 class="display-5 fw-bold">Explore the canvas experiments</h1>
-                            <p class="lead text-light opacity-75">A simple landing page to navigate through the available practice pages.</p>
-                            <div class="d-flex gap-2">
-                                <a class="btn btn-light btn-lg" href="canvas-practise/practise-1.html">Open Practice 1</a>
-                                <a class="btn btn-outline-light btn-lg" href="canvas-practise/practise-2.html">Open Practice 2</a>
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="bg-white bg-opacity-10 rounded-4 p-4 text-center">
-                                <h3 class="fw-semibold mb-0">2 Interactive Pages</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="pb-5">
-            <div class="container">
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <a class="page-link" href="canvas-practise/practise-1.html">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body p-4">
-                                    <span class="badge bg-primary-subtle text-primary mb-3">Practice 1</span>
-                                    <h4 class="card-title">Canvas Object Management</h4>
-                                    <p class="card-text text-muted">A simple walkthrough page that shows how multiple elements are handled together.</p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-6">
-                        <a class="page-link" href="canvas-practise/practise-2.html">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body p-4">
-                                    <span class="badge bg-success-subtle text-success mb-3">Practice 2</span>
-                                    <h4 class="card-title">Modular 2D Canvas Ecosystem</h4>
-                                    <p class="card-text text-muted">A more complete scene page with sky, scenery, and animated characters.</p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-dark text-white py-4 mt-auto">
-        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-            <span>© 2026 Canvas Practice</span>
-            <div>
-                <a class="text-white-50 text-decoration-none me-3" href="canvas-practise/practise-1.html">Practice 1</a>
-                <a class="text-white-50 text-decoration-none" href="canvas-practise/practise-2.html">Practice 2</a>
+        <div class="spotlight-hero__content">
+            <span class="spotlight-hero__eyebrow">Animation Practice Lab</span>
+            <h1 class="spotlight-hero__title">Explore Every <em>Experiment</em></h1>
+            <p class="spotlight-hero__text">
+                A spotlight hub for all canvas demos, scroll scenes, and the Tariq Al Futtaim build.
+                Use the header to jump to any page instantly.
+            </p>
+            <div class="spotlight-hero__actions">
+                <a class="btn btn--gold" href="taf/index.html">Open TAF Site</a>
+                <a class="btn btn--ghost" href="#all-pages">Browse All Pages</a>
             </div>
         </div>
-    </footer>
+    </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <section class="pages-section" id="all-pages">
+        <div class="pages-section__inner">
+            <div class="pages-section__head">
+                <div>
+                    <h2>All HTML Pages</h2>
+                    <p>11 interactive pages in this repository</p>
+                </div>
+            </div>
+            <div class="pages-grid">
+                <a class="page-card" href="taf/index.html">
+                    <span class="page-card__tag">Main Site</span>
+                    <h3 class="page-card__title">Tariq Al Futtaim</h3>
+                    <p class="page-card__desc">Full scroll-driven site with hero, heritage, vision, and principles sections.</p>
+                </a>
+                <a class="page-card" href="canvas-practise/practise-1.html">
+                    <span class="page-card__tag">Practice 1</span>
+                    <h3 class="page-card__title">Canvas Object Management</h3>
+                    <p class="page-card__desc">Managing multiple canvas objects together.</p>
+                </a>
+                <a class="page-card" href="canvas-practise/practise-2.html">
+                    <span class="page-card__tag">Practice 2</span>
+                    <h3 class="page-card__title">2D Canvas Ecosystem</h3>
+                    <p class="page-card__desc">Sky, scenery, and animated characters in one scene.</p>
+                </a>
+                <a class="page-card" href="canvas-practise/practise-3.html">
+                    <span class="page-card__tag">Practice 3</span>
+                    <h3 class="page-card__title">Wave Text Path</h3>
+                    <p class="page-card__desc">Text animated along a wave path.</p>
+                </a>
+                <a class="page-card" href="canvas-practise/practise-5.html">
+                    <span class="page-card__tag">Practice 5</span>
+                    <h3 class="page-card__title">3D Canvas + Slider</h3>
+                    <p class="page-card__desc">3D canvas combined with an HTML slider section.</p>
+                </a>
+                <a class="page-card" href="canvas-practise/practise-7.html">
+                    <span class="page-card__tag">Practice 7</span>
+                    <h3 class="page-card__title">3D Image Slider</h3>
+                    <p class="page-card__desc">Lun Dev style 3D image slider experiment.</p>
+                </a>
+                <a class="page-card" href="canvas-practise/practise-8.html">
+                    <span class="page-card__tag">Spotlight</span>
+                    <h3 class="page-card__title">Cinematic Scroll Hero</h3>
+                    <p class="page-card__desc">Spotlight scroll hero with loader and cinematic intro.</p>
+                </a>
+                <a class="page-card" href="canvas-practise/canva-practise-1.html">
+                    <span class="page-card__tag">Canvas 1</span>
+                    <h3 class="page-card__title">Rectangle & Circle</h3>
+                    <p class="page-card__desc">Basic HTML5 canvas shapes demo.</p>
+                </a>
+                <a class="page-card" href="canvas-practise/canva-practise-2.html">
+                    <span class="page-card__tag">Canvas 2</span>
+                    <h3 class="page-card__title">Morphing Canvas</h3>
+                    <p class="page-card__desc">Scroll-controlled morphing canvas animation.</p>
+                </a>
+                <a class="page-card" href="canvas-practise/canva-practise-3.html">
+                    <span class="page-card__tag">Canvas 3</span>
+                    <h3 class="page-card__title">Particle Showcase</h3>
+                    <p class="page-card__desc">Solid-to-shatter particle image showcase.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">© 2026 Animation Practice Lab</footer>
+
+    <script src="js/site-nav.js" data-depth="0" defer></script>
+    <script>
+        const hero = document.getElementById('spotlightHero');
+        const beam = document.getElementById('spotlightBeam');
+        const grid = document.getElementById('spotlightGrid');
+
+        hero.addEventListener('mousemove', (e) => {
+            const rect = hero.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            beam.style.setProperty('--mx', `${x}%`);
+            beam.style.setProperty('--my', `${y}%`);
+            grid.style.setProperty('--mx', `${x}%`);
+            grid.style.setProperty('--my', `${y}%`);
+        });
+    </script>
 </body>
 </html>
