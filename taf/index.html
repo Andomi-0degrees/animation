@@ -937,6 +937,295 @@
             .vision__quote {
                 font-size: clamp(1.35rem, 5.2vw, 1.75rem);
             }
+
+            .principles__layout {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .principles__inner {
+                padding: 4rem 1.75rem 5rem;
+            }
+
+            .principles__header {
+                max-width: none;
+            }
+
+            .principles__cards-stage {
+                perspective-origin: 50% 50%;
+            }
+
+            .principles__columns {
+                grid-template-columns: 1fr;
+                transform: rotateY(-4deg) rotateX(1deg);
+            }
+
+            .principles__marquee {
+                height: clamp(380px, 52vh, 480px);
+            }
+        }
+
+        /* ── Principles section (section 4) ── */
+        .principles {
+            position: relative;
+            background: #faf9f6;
+            color: #1e1e1e;
+            overflow: hidden;
+        }
+
+        .principles__scroll {
+            position: relative;
+            z-index: 1;
+        }
+
+        .principles__bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .principles__bg-parallax {
+            position: absolute;
+            inset: -8%;
+            will-change: transform;
+        }
+
+        .principles__bg-track {
+            display: flex;
+            width: calc(200% + 2px);
+            height: 100%;
+            will-change: transform;
+        }
+
+        .principles__bg-track img {
+            flex: 0 0 calc(50% + 1px);
+            width: calc(50% + 1px);
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .principles__bg-spotlight {
+            position: absolute;
+            width: min(40vw, 480px);
+            height: min(40vw, 480px);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(196, 160, 106, 0.14) 0%,
+                transparent 62%
+            );
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+            will-change: left, top, opacity;
+        }
+
+        .principles__inner {
+            position: relative;
+            z-index: 2;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: clamp(4.5rem, 7vw, 6.5rem) clamp(1.75rem, 4vw, 3.5rem) clamp(5rem, 8vw, 7rem);
+            overflow: visible;
+        }
+
+        .principles__layout {
+            display: grid;
+            grid-template-columns: minmax(0, 0.36fr) minmax(0, 0.64fr);
+            gap: clamp(2rem, 4.5vw, 4rem);
+            align-items: center;
+        }
+
+        .principles__header {
+            max-width: 480px;
+            margin-bottom: 0;
+            align-self: center;
+        }
+
+        .principles__title,
+        .principles__description {
+            will-change: transform, opacity;
+        }
+
+        .principles__title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.35rem, 3.8vw, 3.1rem);
+            font-weight: 400;
+            line-height: 1.1;
+            letter-spacing: 0.015em;
+            color: #c4a06a;
+            margin-bottom: 1.1rem;
+        }
+
+        .principles__description {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.94rem, 1vw, 1rem);
+            font-weight: 400;
+            line-height: 1.7;
+            color: #2a2a2a;
+        }
+
+        .principles__cards-stage {
+            position: relative;
+            perspective: 1200px;
+            perspective-origin: 55% 50%;
+            transform-style: preserve-3d;
+        }
+
+        .principles__columns {
+            display: grid;
+            grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+            gap: 14px;
+            align-items: stretch;
+            transform-style: preserve-3d;
+            transform: rotateY(-7deg) rotateX(2deg);
+            will-change: transform;
+        }
+
+        .principles__marquee {
+            position: relative;
+            overflow: hidden;
+            height: clamp(480px, 58vh, 620px);
+            transform-style: preserve-3d;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+        }
+
+        .principles__marquee-track {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            will-change: transform;
+            transform-style: preserve-3d;
+        }
+
+        .principles__column--cards-a .principles__card {
+            height: clamp(196px, 20vw, 232px);
+            flex-shrink: 0;
+        }
+
+        .principles__column--cards-b .principles__card {
+            height: clamp(228px, 24vw, 276px);
+            flex-shrink: 0;
+        }
+
+        .principles__column--cards-a .principles__card-reveal {
+            transform: rotateY(5deg) translateZ(10px);
+        }
+
+        .principles__column--cards-b .principles__card-reveal {
+            transform: rotateY(-6deg) translateZ(18px);
+            box-shadow: 0 14px 40px rgba(20, 24, 30, 0.11);
+        }
+
+        .principles__card {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .principles__card-reveal {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            height: 100%;
+            background: #fff;
+            box-shadow: 0 10px 36px rgba(20, 24, 30, 0.09);
+            overflow: hidden;
+            border-radius: 16px;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .principles__card--link:hover .principles__card-reveal,
+        .principles__card--link:focus-within .principles__card-reveal {
+            transform: rotateY(0deg) translateZ(28px) scale(1.02);
+            box-shadow: 0 18px 48px rgba(20, 24, 30, 0.14);
+        }
+
+        .principles__column--cards-b .principles__card--link:hover .principles__card-reveal,
+        .principles__column--cards-b .principles__card--link:focus-within .principles__card-reveal {
+            transform: rotateY(0deg) translateZ(32px) scale(1.02);
+        }
+
+        .principles__image-wrap {
+            position: relative;
+            flex: 1 1 auto;
+            min-height: 0;
+            height: 100%;
+            overflow: hidden;
+            background: #ece8e0;
+        }
+
+        .principles__image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .principles__hover-text {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 1.2rem 1.25rem 1.35rem;
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.84rem, 0.92vw, 0.92rem);
+            font-weight: 400;
+            line-height: 1.55;
+            color: #2a2a2a;
+            background: #fff;
+            transform: translateY(100%);
+            transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            z-index: 2;
+        }
+
+        .principles__overlay {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .principles__overlay svg {
+            width: 13px;
+            height: 13px;
+            display: block;
+        }
+
+        .principles__card--link:hover .principles__image-wrap img,
+        .principles__card--link:focus-within .principles__image-wrap img {
+            transform: scale(1.06);
+        }
+
+        .principles__card--link:hover .principles__hover-text,
+        .principles__card--link:focus-within .principles__hover-text {
+            transform: translateY(0);
+        }
+
+        .principles__card--link:hover .principles__overlay,
+        .principles__card--link:focus-within .principles__overlay {
+            transform: scale(1.06);
         }
     </style>
 </head>
@@ -1107,6 +1396,142 @@
                         <span class="quote-line"><span class="quote-line-inner">show care, and carry forward what we stand for.&rdquo;</span></span>
                     </blockquote>
                     <cite class="vision__attribution" id="visionAttribution">Tariq Al Futtaim, Founder</cite>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         PRINCIPLES SECTION — scroll reveal + bg drift left
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="principles" id="principles">
+        <div class="principles__scroll" id="principlesScroll">
+            <div class="principles__bg" id="principlesBg" aria-hidden="true">
+                <div class="principles__bg-parallax" id="principlesBgParallax">
+                    <div class="principles__bg-track" id="principlesBgTrack">
+                        <img src="img/Operating%20Principles.png" alt="">
+                        <img src="img/Operating%20Principles.png" alt="" aria-hidden="true">
+                    </div>
+                </div>
+                <div class="principles__bg-spotlight" id="principlesBgSpotlight" aria-hidden="true"></div>
+            </div>
+
+            <div class="principles__inner">
+                <div class="principles__layout">
+                    <header class="principles__header">
+                        <h2 class="principles__title" id="principlesTitle">The Standard We Build By</h2>
+                        <p class="principles__description" id="principlesDescription">
+                            Principles guide every decision we make.<br>
+                            They are the foundation of our work:
+                        </p>
+                    </header>
+
+                    <div class="principles__cards-stage" id="principlesCardsStage">
+                        <div class="principles__columns" id="principlesColumns">
+                            <div class="principles__column principles__column--cards-a" id="principlesColumnLeft">
+                        <div class="principles__marquee">
+                            <div class="principles__marquee-track" id="principlesTrackLeft">
+                                <article class="principles__card principles__card--link" tabindex="0">
+                                    <div class="principles__card-reveal">
+                                        <div class="principles__image-wrap">
+                                            <img src="img/principles%20(2).png" alt="Traditional courtyard at sunset">
+                                            <p class="principles__hover-text">We build with meaning and deliver with pride</p>
+                                            <div class="principles__overlay" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article class="principles__card principles__card--link" tabindex="0">
+                                    <div class="principles__card-reveal">
+                                        <div class="principles__image-wrap">
+                                            <img src="img/principles%20(1).png" alt="Heritage and falconry">
+                                            <p class="principles__hover-text">We make bold decisions that hold their promise.</p>
+                                            <div class="principles__overlay" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article class="principles__card principles__card--link" tabindex="0">
+                                    <div class="principles__card-reveal">
+                                        <div class="principles__image-wrap">
+                                            <img src="img/principles%20(3).png" alt="Desert landscape with camel">
+                                            <p class="principles__hover-text">We act with clarity and care.</p>
+                                            <div class="principles__overlay" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article class="principles__card principles__card--link" tabindex="0" aria-hidden="true">
+                                    <div class="principles__card-reveal">
+                                        <div class="principles__image-wrap">
+                                            <img src="img/principles%20(2).png" alt="">
+                                            <p class="principles__hover-text">We build with meaning and deliver with pride</p>
+                                            <div class="principles__overlay" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article class="principles__card principles__card--link" tabindex="0" aria-hidden="true">
+                                    <div class="principles__card-reveal">
+                                        <div class="principles__image-wrap">
+                                            <img src="img/principles%20(1).png" alt="">
+                                            <p class="principles__hover-text">We make bold decisions that hold their promise.</p>
+                                            <div class="principles__overlay" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article class="principles__card principles__card--link" tabindex="0" aria-hidden="true">
+                                    <div class="principles__card-reveal">
+                                        <div class="principles__image-wrap">
+                                            <img src="img/principles%20(3).png" alt="">
+                                            <p class="principles__hover-text">We act with clarity and care.</p>
+                                            <div class="principles__overlay" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
+                            <div class="principles__column principles__column--cards-b" id="principlesColumnRight">
+                        <div class="principles__marquee">
+                            <div class="principles__marquee-track" id="principlesTrackRight">
+                                <article class="principles__card principles__card--link" tabindex="0">
+                                    <div class="principles__card-reveal">
+                                        <div class="principles__image-wrap">
+                                            <img src="img/principles%20(5).png" alt="Moving with intent">
+                                            <p class="principles__hover-text">We move with fearless intent.</p>
+                                            <div class="principles__overlay" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article class="principles__card principles__card--link" tabindex="0">
+                                    <div class="principles__card-reveal">
+                                        <div class="principles__image-wrap">
+                                            <img src="img/principles%20(4).png" alt="Architecture and foundations">
+                                            <p class="principles__hover-text">We invest in tomorrow&rsquo;s foundations.</p>
+                                            <div class="principles__overlay" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article class="principles__card principles__card--link" tabindex="0" aria-hidden="true">
+                                    <div class="principles__card-reveal">
+                                        <div class="principles__image-wrap">
+                                            <img src="img/principles%20(5).png" alt="">
+                                            <p class="principles__hover-text">We move with fearless intent.</p>
+                                            <div class="principles__overlay" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article class="principles__card principles__card--link" tabindex="0" aria-hidden="true">
+                                    <div class="principles__card-reveal">
+                                        <div class="principles__image-wrap">
+                                            <img src="img/principles%20(4).png" alt="">
+                                            <p class="principles__hover-text">We invest in tomorrow&rsquo;s foundations.</p>
+                                            <div class="principles__overlay" aria-hidden="true"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1930,6 +2355,9 @@
                 initHeritageScroll();
                 startHeritageBgMarquee();
                 initVisionScroll();
+                startPrinciplesBgMarquee();
+                initPrinciplesBgScroll();
+                initPrinciplesSection();
                 ScrollTrigger.refresh();
             }, 150);
         });
@@ -2055,9 +2483,207 @@
             clearTimeout(visionResizeTimer);
             visionResizeTimer = setTimeout(() => {
                 initVisionScroll();
+                startPrinciplesBgMarquee();
+                initPrinciplesBgScroll();
+                initPrinciplesSection();
                 ScrollTrigger.refresh();
             }, 150);
         });
+
+        // ── Principles section — dual vertical marquees + bg ──
+        const principlesScroll = document.getElementById('principlesScroll');
+        const principlesTitle = document.getElementById('principlesTitle');
+        const principlesDescription = document.getElementById('principlesDescription');
+        const principlesColumnLeft = document.getElementById('principlesColumnLeft');
+        const principlesColumnRight = document.getElementById('principlesColumnRight');
+        const principlesColumns = document.getElementById('principlesColumns');
+        const principlesCardsStage = document.getElementById('principlesCardsStage');
+        const principlesTrackLeft = document.getElementById('principlesTrackLeft');
+        const principlesTrackRight = document.getElementById('principlesTrackRight');
+        const principlesBgTrack = document.getElementById('principlesBgTrack');
+        const principlesBgParallax = document.getElementById('principlesBgParallax');
+        const principlesBgSpotlight = document.getElementById('principlesBgSpotlight');
+        let principlesBgMarquee = null;
+        let principlesBgScrollTween = null;
+        let principlesLeftMarquee = null;
+        let principlesRightMarquee = null;
+        let principlesMarqueeScrollTrigger = null;
+        let principlesHeaderTween = null;
+        let principlesHeaderStarted = false;
+        let principlesMarqueesRunning = false;
+
+        const principlesBgParallaxX = gsap.quickTo(principlesBgParallax, 'x', { duration: 0.85, ease: 'power2.out' });
+        const principlesBgParallaxY = gsap.quickTo(principlesBgParallax, 'y', { duration: 0.85, ease: 'power2.out' });
+        const principlesBgSpotOpacity = gsap.quickTo(principlesBgSpotlight, 'opacity', { duration: 0.5, ease: 'power2.out' });
+        const principlesColumnsTiltY = gsap.quickTo(principlesColumns, 'rotateY', { duration: 0.9, ease: 'power2.out' });
+        const principlesColumnsTiltX = gsap.quickTo(principlesColumns, 'rotateX', { duration: 0.9, ease: 'power2.out' });
+
+        gsap.set([principlesTitle, principlesDescription], { opacity: 0, y: 24 });
+
+        function getMarqueeHalfHeight(track) {
+            return track.scrollHeight / 2;
+        }
+
+        function startPrinciplesHeaderIntro() {
+            if (principlesHeaderStarted) return;
+            principlesHeaderStarted = true;
+            if (principlesHeaderTween) principlesHeaderTween.kill();
+            principlesHeaderTween = gsap.timeline()
+                .to(principlesTitle, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' })
+                .to(principlesDescription, { y: 0, opacity: 1, duration: 0.65, ease: 'power2.out' }, '-=0.45');
+        }
+
+        function playPrinciplesMarquees() {
+            if (principlesMarqueesRunning) return;
+            principlesMarqueesRunning = true;
+            principlesLeftMarquee?.play();
+            principlesRightMarquee?.play();
+        }
+
+        function pausePrinciplesMarquees() {
+            principlesMarqueesRunning = false;
+            principlesLeftMarquee?.pause();
+            principlesRightMarquee?.pause();
+        }
+
+        function startPrinciplesCardMarquees() {
+            if (principlesLeftMarquee) principlesLeftMarquee.kill();
+            if (principlesRightMarquee) principlesRightMarquee.kill();
+
+            gsap.set(principlesTrackLeft, { y: 0 });
+            gsap.set(principlesTrackRight, { y: () => -getMarqueeHalfHeight(principlesTrackRight) });
+
+            const leftDistance = getMarqueeHalfHeight(principlesTrackLeft);
+            const rightDistance = getMarqueeHalfHeight(principlesTrackRight);
+
+            principlesLeftMarquee = gsap.to(principlesTrackLeft, {
+                y: -leftDistance,
+                duration: 32,
+                ease: 'none',
+                repeat: -1,
+                paused: true
+            });
+
+            principlesRightMarquee = gsap.to(principlesTrackRight, {
+                y: 0,
+                duration: 26,
+                ease: 'none',
+                repeat: -1,
+                paused: true
+            });
+        }
+
+        function initPrinciplesMarqueeScroll() {
+            if (principlesMarqueeScrollTrigger) {
+                principlesMarqueeScrollTrigger.kill();
+            }
+
+            principlesMarqueeScrollTrigger = ScrollTrigger.create({
+                trigger: '#principlesScroll',
+                start: 'top 82%',
+                end: 'bottom top',
+                onEnter: () => {
+                    startPrinciplesHeaderIntro();
+                    playPrinciplesMarquees();
+                },
+                onEnterBack: () => {
+                    startPrinciplesHeaderIntro();
+                    playPrinciplesMarquees();
+                },
+                onLeave: () => pausePrinciplesMarquees(),
+                onLeaveBack: () => pausePrinciplesMarquees()
+            });
+        }
+
+        function initPrinciplesMarqueeHover() {
+            principlesColumnLeft.addEventListener('mouseenter', () => principlesLeftMarquee?.pause());
+            principlesColumnLeft.addEventListener('mouseleave', () => {
+                if (principlesMarqueesRunning) principlesLeftMarquee?.play();
+            });
+            principlesColumnRight.addEventListener('mouseenter', () => principlesRightMarquee?.pause());
+            principlesColumnRight.addEventListener('mouseleave', () => {
+                if (principlesMarqueesRunning) principlesRightMarquee?.play();
+            });
+        }
+
+        function initPrinciplesBgMouse() {
+            const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+            if (!canHover) return;
+
+            principlesScroll.addEventListener('mousemove', (e) => {
+                const rect = principlesScroll.getBoundingClientRect();
+                const px = (e.clientX - rect.left) / rect.width;
+                const py = (e.clientY - rect.top) / rect.height;
+                const x = px - 0.5;
+                const y = py - 0.5;
+
+                principlesColumnsTiltY(-7 + x * 5);
+                principlesColumnsTiltX(2 - y * 3);
+
+                principlesBgParallaxX(x * 32);
+                principlesBgParallaxY(y * 26);
+                gsap.to(principlesBgSpotlight, {
+                    left: px * 100 + '%',
+                    top: py * 100 + '%',
+                    duration: 0.7,
+                    ease: 'power2.out'
+                });
+                principlesBgSpotOpacity(0.4);
+            });
+
+            principlesScroll.addEventListener('mouseleave', () => {
+                principlesColumnsTiltY(-7);
+                principlesColumnsTiltX(2);
+                principlesBgParallaxX(0);
+                principlesBgParallaxY(0);
+                principlesBgSpotOpacity(0);
+            });
+        }
+
+        function startPrinciplesBgMarquee() {
+            if (principlesBgMarquee) principlesBgMarquee.kill();
+
+            principlesBgMarquee = gsap.fromTo(principlesBgTrack, {
+                xPercent: -50
+            }, {
+                xPercent: 0,
+                duration: 42,
+                ease: 'none',
+                repeat: -1
+            });
+        }
+
+        function initPrinciplesBgScroll() {
+            if (principlesBgScrollTween) {
+                principlesBgScrollTween.scrollTrigger?.kill();
+                principlesBgScrollTween.kill();
+            }
+
+            principlesBgScrollTween = gsap.to(principlesBgParallax, {
+                yPercent: -4,
+                scale: 1.03,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#principlesScroll',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 1.2,
+                    invalidateOnRefresh: true
+                }
+            });
+        }
+
+        function initPrinciplesSection() {
+            startPrinciplesCardMarquees();
+            initPrinciplesMarqueeScroll();
+        }
+
+        startPrinciplesCardMarquees();
+        startPrinciplesBgMarquee();
+        initPrinciplesBgMouse();
+        initPrinciplesMarqueeHover();
+        initPrinciplesBgScroll();
+        initPrinciplesMarqueeScroll();
     </script>
 </body>
 </html>
