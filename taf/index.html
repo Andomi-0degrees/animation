@@ -222,8 +222,11 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-8%);
+            /* Width drives the box; height is locked to it via aspect-ratio so the
+               man and flag always scale together and never drift apart. */
             width: min(58vw, 760px);
-            height: 88%;
+            aspect-ratio: 760 / 620;
+            height: auto;
             pointer-events: none;
         }
 
@@ -242,14 +245,14 @@
             left: 20%;
             top: 22%;
             height: 112%;
-            z-index: 3;
+            z-index: 2;
             transform-origin: 3% 92%;
         }
 
         .hero__bg-person {
             left: 8%;
             height: 100%;
-            z-index: 4;
+            z-index: 6;
         }
 
         /* STEP 8 — Dark gradient overlay for text contrast; opacity animated in on load */
@@ -978,20 +981,21 @@
             }
 
             .hero__subject-group {
-                width: 92vw;
-                height: 72%;
+                width: min(92vw, 520px);
+                aspect-ratio: 760 / 620;
+                height: auto;
                 transform: translateX(-50%);
             }
 
             .hero__bg-person {
-                left: 4%;
+                left: 8%;
                 height: 100%;
             }
 
             .hero__bg-flag {
                 left: 20%;
                 top: 22%;
-                height: 105%;
+                height: 112%;
             }
 
             .heritage__inner {
