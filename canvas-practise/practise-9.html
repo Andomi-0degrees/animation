@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practise 9 AI — Enterprise Security</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.48/build/spline-viewer.js"></script>
+
+    <style>
+        :root {
+            --background: 0 0% 10%;
+            --foreground: 0 0% 96%;
+            --primary: 119 99% 46%;
+            --primary-foreground: 0 0% 4%;
+            --secondary: 0 0% 18%;
+            --secondary-foreground: 0 0% 96%;
+            --muted: 0 0% 16%;
+            --muted-foreground: 0 0% 60%;
+            --accent: 119 99% 46%;
+            --accent-foreground: 0 0% 4%;
+            --destructive: 0 84% 60%;
+            --border: 0 0% 20%;
+            --input: 0 0% 20%;
+            --ring: 119 99% 46%;
+            --radius: 0.5rem;
+            --nav-button: 0 0% 18%;
+            --hero-bg: 0 0% 8%;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background: hsl(var(--hero-bg));
+            color: hsl(var(--foreground));
+            overflow-x: hidden;
+        }
+
+        @keyframes fade-up {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+                filter: blur(4px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .animate-fade-up {
+            opacity: 0;
+            animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .animate-fade-in {
+            opacity: 0;
+            animation: fade-in 0.5s ease-out forwards;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .navbar {
+                padding: 1.25rem 4rem;
+            }
+        }
+
+        .navbar__logo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: hsl(var(--foreground));
+            text-decoration: none;
+        }
+
+        .navbar__links {
+            display: none;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        @media (min-width: 768px) {
+            .navbar__links {
+                display: flex;
+            }
+        }
+
+        .navbar__links a {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+
+        .navbar__links a:hover {
+            color: hsl(var(--foreground));
+        }
+
+        .navbar__cta {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 1.5rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: hsl(var(--foreground));
+            background: hsl(var(--nav-button));
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.25s ease, transform 0.15s ease;
+        }
+
+        @media (min-width: 768px) {
+            .navbar__cta {
+                display: inline-flex;
+            }
+        }
+
+        .navbar__cta:hover {
+            background: hsl(var(--nav-button) / 0.8);
+        }
+
+        .navbar__cta:active {
+            transform: scale(0.97);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            background: hsl(var(--hero-bg));
+            overflow: hidden;
+        }
+
+        .hero__spline-wrap {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .hero__spline-wrap spline-viewer,
+        .hero__spline-fallback {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .hero__spline-fallback {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 70% 40%, hsl(var(--primary) / 0.08), transparent),
+                hsl(var(--hero-bg));
+        }
+
+        /* Unique spotlight canvas — sits above Spline, below text */
+        .hero__spotlight {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .hero__veil {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: hsl(var(--hero-bg) / 0.35);
+            pointer-events: none;
+        }
+
+        .hero__scan-ui {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .hero__scan-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    hsl(var(--primary) / 0.15) 20%,
+                    hsl(var(--primary) / 0.7) 50%,
+                    hsl(var(--primary) / 0.15) 80%,
+                    transparent);
+            box-shadow: 0 0 24px hsl(var(--primary) / 0.4);
+            opacity: 0;
+        }
+
+        .hero__lock-ring {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            margin: -40px 0 0 -40px;
+            border: 1px solid hsl(var(--primary) / 0.5);
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .hero__lock-ring::before,
+        .hero__lock-ring::after {
+            content: '';
+            position: absolute;
+            background: hsl(var(--primary));
+        }
+
+        .hero__lock-ring::before {
+            width: 8px;
+            height: 1px;
+            top: 50%;
+            left: -4px;
+            margin-top: -0.5px;
+        }
+
+        .hero__lock-ring::after {
+            width: 1px;
+            height: 8px;
+            left: 50%;
+            top: -4px;
+            margin-left: -0.5px;
+        }
+
+        .hero__status {
+            position: absolute;
+            top: 6rem;
+            right: 2rem;
+            z-index: 4;
+            font-size: 0.62rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: hsl(var(--primary) / 0.7);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+        }
+
+        @media (min-width: 1024px) {
+            .hero__status {
+                right: 4rem;
+            }
+        }
+
+        .hero__status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: hsl(var(--primary));
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 hsl(var(--primary) / 0.5);
+            }
+
+            50% {
+                opacity: 0.6;
+                box-shadow: 0 0 0 6px hsl(var(--primary) / 0);
+            }
+        }
+
+        .hero__content {
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+            width: 100%;
+            max-width: 90%;
+            padding: 8rem 1.5rem 2.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .hero__content {
+                max-width: 28rem;
+                padding-left: 2.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .hero__content {
+                max-width: 42rem;
+            }
+        }
+
+        .hero__title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .hero__title {
+                margin-bottom: 1rem;
+            }
+        }
+
+        .hero__title .accent {
+            color: hsl(var(--primary));
+        }
+
+        .hero__sub {
+            font-size: clamp(1.125rem, 2.5vw, 1.875rem);
+            font-weight: 300;
+            color: hsl(var(--foreground) / 0.8);
+            margin-bottom: 0.75rem;
+        }
+
+        @media (min-width: 768px) {
+            .hero__sub {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        .hero__desc {
+            font-size: clamp(0.875rem, 1.5vw, 1.25rem);
+            font-weight: 300;
+            line-height: 1.65;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .hero__desc {
+                margin-bottom: 2rem;
+            }
+        }
+
+        .hero__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            font-weight: 700;
+        }
+
+        .hero__btn {
+            pointer-events: auto;
+            border: none;
+            font-family: inherit;
+            font-size: 0.875rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: filter 0.2s ease, transform 0.15s ease;
+        }
+
+        @media (min-width: 768px) {
+            .hero__btn {
+                padding: 1rem 2rem;
+            }
+        }
+
+        .hero__btn:active {
+            transform: scale(0.97);
+        }
+
+        .hero__btn--primary {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .hero__btn--primary:hover {
+            filter: brightness(1.1);
+        }
+
+        .hero__btn--ghost {
+            background: #fff;
+            color: hsl(var(--background));
+        }
+
+        .hero__btn--ghost:hover {
+            filter: brightness(0.9);
+        }
+
+        .hero__trust {
+            font-size: 0.75rem;
+            font-weight: 300;
+            color: hsl(var(--muted-foreground) / 0.6);
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .hero__trust {
+                margin-top: 1.5rem;
+            }
+        }
+
+        .hero__hint {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 10;
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: hsl(var(--muted-foreground) / 0.45);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @media (min-width: 1024px) {
+            .hero__hint {
+                right: 4rem;
+            }
+        }
+
+        .hero__hint svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="navbar__logo">Practise 9</a>
+        <ul class="navbar__links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#contacts">Contacts</a></li>
+        </ul>
+        <button class="navbar__cta" type="button">Get Quote</button>
+    </nav>
+
+    <main class="hero" id="hero">
+        <div class="hero__spline-wrap">
+            <div class="hero__spline-fallback" id="splineFallback"></div>
+            <spline-viewer id="splineViewer" url="https://prod.spline.design/Slk6b8kz3LRlKiyk/scene.splinecode"
+                loading-anim-type="spinner-small-dark"></spline-viewer>
+        </div>
+
+        <div class="hero__veil"></div>
+        <canvas class="hero__spotlight" id="spotlightCanvas" aria-hidden="true"></canvas>
+
+        <div class="hero__scan-ui" id="scanUi">
+            <div class="hero__scan-line" id="scanLine"></div>
+            <div class="hero__lock-ring" id="lockRing"></div>
+        </div>
+
+        <div class="hero__status animate-fade-in" id="heroStatus" style="animation-delay: 1.2s">
+            <span class="hero__status-dot"></span>
+            Practise 9 scan active
+        </div>
+
+        <div class="hero__content">
+            <h1 class="hero__title animate-fade-up" style="animation-delay: 0.2s">
+                Practise <span class="accent"> AI</span>
+            </h1>
+            <p class="hero__sub animate-fade-up" style="animation-delay: 0.4s">
+                Lorem ipsum dolor, sit amet consectetur
+            </p>
+            <p class="hero__desc animate-fade-up" style="animation-delay: 0.55s">
+                lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
+            <div class="hero__actions animate-fade-up" style="animation-delay: 0.7s">
+                <button class="hero__btn hero__btn--primary" type="button">Book a Call</button>
+                <button class="hero__btn hero__btn--ghost" type="button">Our Work</button>
+            </div>
+            <p class="hero__trust animate-fade-up" style="animation-delay: 0.85s">
+                Trusted security partner. Columbus, OH. 12 systems deployed.
+            </p>
+        </div>
+
+        <div class="hero__hint animate-fade-in" id="heroHint" style="animation-delay: 1.4s">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
+            </svg>
+            Move to aim beam
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+        /*
+         * Practise 9 SPOTLIGHT — unique multi-layer security illuminator
+         * Not a simple radial mask. Combines:
+         *  1. Rotating radar sweep beam
+         *  2. Mouse-aimed floodlight cone (security lamp geometry)
+         *  3. Hex grid that illuminates under beams
+         *  4. Volumetric dust particles caught in light
+         *  5. Vertical scan line + target lock ring UI
+         */
+
+        const canvas = document.getElementById('spotlightCanvas');
+        const ctx = canvas.getContext('2d');
+        const scanLine = document.getElementById('scanLine');
+        const lockRing = document.getElementById('lockRing');
+        const heroHint = document.getElementById('heroHint');
+        const splineViewer = document.getElementById('splineViewer');
+        const splineFallback = document.getElementById('splineFallback');
+
+        const PRIMARY = 'hsl(119, 99%, 46%)';
+        const PRIMARY_RGB = [1, 235, 36];
+
+        let w = 0;
+        let h = 0;
+        let dpr = 1;
+        let mouse = { x: 0.5, y: 0.5, active: false };
+        let smoothMouse = { x: 0.5, y: 0.5 };
+        let sweepAngle = 0;
+        let introProgress = 0;
+        let scanY = 0;
+        let time = 0;
+        let particles = [];
+        let hexCells = [];
+
+        function resize() {
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            w = window.innerWidth;
+            h = window.innerHeight;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            buildHexGrid();
+            initParticles();
+        }
+
+        function buildHexGrid() {
+            hexCells = [];
+            const size = Math.max(28, Math.min(42, w / 28));
+            const hexH = size * Math.sqrt(3);
+            const cols = Math.ceil(w / (size * 1.5)) + 2;
+            const rows = Math.ceil(h / hexH) + 2;
+
+            for (let row = -1; row < rows; row++) {
+                for (let col = -1; col < cols; col++) {
+                    const x = col * size * 1.5 + (row % 2 ? size * 0.75 : 0);
+                    const y = row * hexH * 0.5;
+                    hexCells.push({ x, y, size, glow: 0 });
+                }
+            }
+        }
+
+        function initParticles() {
+            particles = Array.from({ length: Math.min(120, Math.floor(w * h / 12000)) }, () => ({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.3,
+                size: Math.random() * 1.8 + 0.4,
+                alpha: Math.random() * 0.5 + 0.1
+            }));
+        }
+
+        function drawHex(cx, cy, size) {
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i - Math.PI / 6;
+                const x = cx + size * Math.cos(angle);
+                const y = cy + size * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+        }
+
+        function getLightAt(px, py) {
+            const mx = smoothMouse.x * w;
+            const my = smoothMouse.y * h;
+            const dx = px - mx;
+            const dy = py - my;
+            const dist = Math.hypot(dx, dy);
+
+            const floodR = Math.min(w, h) * (0.22 + introProgress * 0.18);
+            let flood = 0;
+            if (introProgress > 0.4) {
+                const coneAngle = Math.atan2(dy, dx);
+                const aimAngle = Math.atan2(my - h * 0.15, mx - w * 0.5);
+                const angleDiff = Math.abs(Math.atan2(Math.sin(coneAngle - aimAngle), Math.cos(coneAngle - aimAngle)));
+                const coneFactor = Math.max(0, 1 - angleDiff / 1.1);
+                flood = Math.max(0, 1 - dist / floodR) * coneFactor * (mouse.active ? 1 : 0.35);
+            }
+
+            const sx = w * 0.5;
+            const sy = h * 0.12;
+            const sdx = px - sx;
+            const sdy = py - sy;
+            const sDist = Math.hypot(sdx, sdy);
+            const sAngle = Math.atan2(sdy, sdx);
+            let angleDiff = sAngle - sweepAngle;
+            while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+            while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+            const sweepWidth = 0.28 + introProgress * 0.12;
+            let sweep = 0;
+            if (Math.abs(angleDiff) < sweepWidth) {
+                sweep = (1 - Math.abs(angleDiff) / sweepWidth) * Math.max(0, 1 - sDist / (Math.max(w, h) * 1.1));
+            }
+
+            const scanDist = Math.abs(py - scanY);
+            const scan = Math.max(0, 1 - scanDist / 80) * 0.55;
+
+            return Math.min(1, flood * 0.85 + sweep * 0.7 + scan * 0.4);
+        }
+
+        function render() {
+            time += 0.016;
+            sweepAngle += 0.018 + introProgress * 0.008;
+            scanY = (Math.sin(time * 0.45) * 0.5 + 0.5) * h;
+
+            smoothMouse.x += (mouse.x - smoothMouse.x) * 0.08;
+            smoothMouse.y += (mouse.y - smoothMouse.y) * 0.08;
+
+            if (introProgress < 1) introProgress = Math.min(1, introProgress + 0.006);
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Dark atmospheric veil
+            ctx.fillStyle = `rgba(8, 8, 10, ${0.52 - introProgress * 0.12})`;
+            ctx.fillRect(0, 0, w, h);
+
+            // Hex grid — lights up under beams
+            hexCells.forEach((cell) => {
+                const light = getLightAt(cell.x, cell.y);
+                cell.glow += (light - cell.glow) * 0.12;
+
+                if (cell.glow > 0.02) {
+                    drawHex(cell.x, cell.y, cell.size * 0.92);
+                    ctx.strokeStyle = `rgba(1, 235, 36, ${cell.glow * 0.35})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.stroke();
+                    ctx.fillStyle = `rgba(1, 235, 36, ${cell.glow * 0.06})`;
+                    ctx.fill();
+                }
+            });
+
+            // Rotating radar sweep wedge
+            const sweepX = w * 0.5;
+            const sweepY = h * 0.12;
+            const sweepGrad = ctx.createConicGradient(sweepAngle - 0.3, sweepX, sweepY);
+            sweepGrad.addColorStop(0, 'rgba(1, 235, 36, 0)');
+            sweepGrad.addColorStop(0.08, `rgba(1, 235, 36, ${0.18 * introProgress})`);
+            sweepGrad.addColorStop(0.12, 'rgba(1, 235, 36, 0)');
+            sweepGrad.addColorStop(1, 'rgba(1, 235, 36, 0)');
+
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.fillStyle = sweepGrad;
+            ctx.beginPath();
+            ctx.arc(sweepX, sweepY, Math.max(w, h) * 1.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Mouse floodlight cone
+            const mx = smoothMouse.x * w;
+            const my = smoothMouse.y * h;
+            const lampX = w * 0.5;
+            const lampY = h * 0.08;
+            const beamAngle = Math.atan2(my - lampY, mx - lampX);
+            const beamLen = Math.max(w, h) * 1.1;
+
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.translate(lampX, lampY);
+            ctx.rotate(beamAngle);
+            const coneGrad = ctx.createLinearGradient(0, 0, beamLen, 0);
+            coneGrad.addColorStop(0, `rgba(1, 235, 36, ${0.35 * introProgress})`);
+            coneGrad.addColorStop(0.15, `rgba(1, 235, 36, ${0.12 * introProgress})`);
+            coneGrad.addColorStop(0.5, 'rgba(1, 235, 36, 0)');
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(beamLen, -beamLen * 0.22);
+            ctx.lineTo(beamLen, beamLen * 0.22);
+            ctx.closePath();
+            ctx.fillStyle = coneGrad;
+            ctx.fill();
+            ctx.restore();
+
+            // Focal pool at cursor
+            const poolR = Math.min(w, h) * (0.14 + introProgress * 0.06);
+            const poolGrad = ctx.createRadialGradient(mx, my, 0, mx, my, poolR);
+            poolGrad.addColorStop(0, `rgba(1, 235, 36, ${0.28 * introProgress})`);
+            poolGrad.addColorStop(0.4, `rgba(1, 235, 36, ${0.08 * introProgress})`);
+            poolGrad.addColorStop(1, 'rgba(1, 235, 36, 0)');
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.fillStyle = poolGrad;
+            ctx.beginPath();
+            ctx.arc(mx, my, poolR, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Dust particles in light
+            particles.forEach((p) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0) p.x = w;
+                if (p.x > w) p.x = 0;
+                if (p.y < 0) p.y = h;
+                if (p.y > h) p.y = 0;
+
+                const light = getLightAt(p.x, p.y);
+                if (light > 0.15) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * (1 + light), 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(1, 235, 36, ${p.alpha * light})`;
+                    ctx.fill();
+                }
+            });
+
+            // Vignette
+            const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.2, w / 2, h / 2, Math.max(w, h) * 0.75);
+            vig.addColorStop(0, 'rgba(0,0,0,0)');
+            vig.addColorStop(1, 'rgba(0,0,0,0.55)');
+            ctx.fillStyle = vig;
+            ctx.fillRect(0, 0, w, h);
+
+            // UI sync
+            scanLine.style.top = scanY + 'px';
+            scanLine.style.opacity = String(0.35 + introProgress * 0.45);
+            lockRing.style.left = mx + 'px';
+            lockRing.style.top = my + 'px';
+            lockRing.style.opacity = mouse.active ? String(0.5 + Math.sin(time * 4) * 0.2) : '0';
+
+            requestAnimationFrame(render);
+        }
+
+        window.addEventListener('resize', resize);
+
+        window.addEventListener('pointermove', (e) => {
+            mouse.x = e.clientX / w;
+            mouse.y = e.clientY / h;
+            mouse.active = true;
+            heroHint.style.opacity = '0';
+        });
+
+        window.addEventListener('pointerleave', () => {
+            mouse.active = false;
+        });
+
+        // Spline load handling
+        if (splineViewer) {
+            splineViewer.addEventListener('load', () => {
+                gsap.to(splineFallback, { opacity: 0, duration: 0.8 });
+            });
+            setTimeout(() => {
+                if (splineFallback.style.opacity !== '0') {
+                    splineFallback.style.opacity = '1';
+                }
+            }, 6000);
+        }
+
+        // Intro: lock ring pulse
+        gsap.fromTo(lockRing, {
+            scale: 0.5,
+            opacity: 0
+        }, {
+            scale: 1,
+            opacity: 0.6,
+            duration: 1.2,
+            delay: 0.8,
+            ease: 'power2.out'
+        });
+
+        resize();
+        render();
+    </script>
+</body>
+
+</html>
