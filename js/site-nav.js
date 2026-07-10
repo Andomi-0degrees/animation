@@ -8,6 +8,7 @@
         { id: 'practise-5', label: 'Practice 5', path: 'canvas-practise/practise-5.html' },
         { id: 'practise-7', label: 'Practice 7', path: 'canvas-practise/practise-7.html' },
         { id: 'practise-8', label: 'Spotlight Hero', path: 'canvas-practise/practise-8.html' },
+        { id: 'practise-9', label: 'Practice 9', path: 'canvas-practise/practise-9.html' },
         { id: 'canva-1', label: 'Canvas 1', path: 'canvas-practise/canva-practise-1.html' },
         { id: 'canva-2', label: 'Canvas 2', path: 'canvas-practise/canva-practise-2.html' },
         { id: 'canva-3', label: 'Canvas 3', path: 'canvas-practise/canva-practise-3.html' }
